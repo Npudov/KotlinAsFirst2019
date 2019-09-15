@@ -68,8 +68,8 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  */
 fun ageDescription(age: Int): String = when {
     (age in 5..20) -> "$age лет"
-    (age % 10 == 1) && (age !in 111..114) -> "$age год"
-    ((age % 10) in 2..4) -> "$age года"
+    ((age % 10 == 1) && (age != 111)) -> "$age год"
+    (((age % 10) in 2..4) && (age !in 112..114))   -> "$age года"
     else -> "$age лет"
 }
 
@@ -152,7 +152,7 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double) : Int {
-    val maxSide = maxOf(a , b , c)
+    val maxSide = maxOf(a, b, c)
     var side1 = 0.0
     var side2 = 0.0
     if (a == maxSide) {
@@ -167,7 +167,7 @@ fun triangleKind(a: Double, b: Double, c: Double) : Int {
         side1 = a
         side2 = b
     }
-    return if  ((c >= a + b) || (a >= b + c) || (b >= a + c)) -1
+    return if ((c >= a + b) || (a >= b + c) || (b >= a + c)) -1
         else if ((sqr(maxSide) == sqr(side1) + sqr(side2))) 1
         else if ((sqr(maxSide) < sqr(side1) + sqr(side2))) 0
         else 2
@@ -183,5 +183,5 @@ fun triangleKind(a: Double, b: Double, c: Double) : Int {
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
     return if ((c > b) || (a > d)) -1
-    else abs(min(b , d) - max(a ,c))
+    else abs(min(b, d) - max(a, c))
 }
