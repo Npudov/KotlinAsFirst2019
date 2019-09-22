@@ -69,7 +69,7 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
 fun ageDescription(age: Int): String = when {
     (age in 5..20) -> "$age лет"
     ((age % 10 == 1) && (age != 111)) -> "$age год"
-    (((age % 10) in 2..4) && (age !in 112..114))   -> "$age года"
+    (((age % 10) in 2..4) && (age !in 112..114)) -> "$age года"
     else -> "$age лет"
 }
 
@@ -136,11 +136,13 @@ fun rookOrBishopThreatens(
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
 ): Int {
-    return if ((kingX == rookX) && ((abs(kingX - bishopX)) == (abs(kingY - bishopY)))) 3
-    else if ((kingY == rookY) && (abs(kingX - bishopX)) == (abs(kingY - bishopY))) 3
-    else if ((abs(kingX - bishopX)) == (abs(kingY - bishopY))) 2
-    else if ((kingX == rookX) || (kingY == rookY)) 1
-    else 0
+    return when {
+        ((kingX == rookX) && ((abs(kingX - bishopX)) == (abs(kingY - bishopY)))) -> 3
+        ((kingY == rookY) && (abs(kingX-bishopX)) == (abs(kingY-bishopY))) -> 3
+        ((abs(kingX-bishopX)) == (abs(kingY-bishopY))) -> 2
+        ((kingX == rookX) || (kingY == rookY)) -> 1
+        else -> 0
+    }
 }
 
 /**
@@ -153,24 +155,12 @@ fun rookOrBishopThreatens(
  */
 fun triangleKind(a: Double, b: Double, c: Double) : Int {
     val maxSide = maxOf(a, b, c)
-    var side1 = 0.0
-    var side2 = 0.0
-    if (a == maxSide) {
-        side1 = b
-        side2 = c
+    return when {
+        (2 * maxSide >= a + b + c) -> - 1
+        ((sqr(maxSide) == sqr(a)+sqr(b)) || (sqr(maxSide) == sqr(b)+sqr(c)) || (sqr(maxSide) == sqr(a)+sqr(c))) -> 1
+        ((sqr(maxSide) > sqr(a)+sqr(b)) || (sqr(maxSide) > sqr(b)+sqr(c)) || (sqr(maxSide) > sqr(a) + sqr(c))) -> 2
+        else -> 0
     }
-     else if (b == maxSide) {
-        side1 = a
-        side2 = c
-    }
-      else {
-        side1 = a
-        side2 = b
-    }
-    return if ((c >= a + b) || (a >= b + c) || (b >= a + c)) -1
-        else if ((sqr(maxSide) == sqr(side1) + sqr(side2))) 1
-        else if ((sqr(maxSide) < sqr(side1) + sqr(side2))) 0
-        else 2
 }
 
 /**
