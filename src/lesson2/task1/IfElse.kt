@@ -138,8 +138,8 @@ fun rookOrBishopThreatens(
 ): Int {
     return when {
         ((kingX == rookX) && ((abs(kingX - bishopX)) == (abs(kingY - bishopY)))) -> 3
-        ((kingY == rookY) && (abs(kingX-bishopX)) == (abs(kingY-bishopY))) -> 3
-        ((abs(kingX-bishopX)) == (abs(kingY-bishopY))) -> 2
+        ((kingY == rookY) && (abs(kingX - bishopX)) == (abs(kingY - bishopY))) -> 3
+        ((abs(kingX - bishopX)) == (abs(kingY - bishopY))) -> 2
         ((kingX == rookX) || (kingY == rookY)) -> 1
         else -> 0
     }
@@ -155,11 +155,12 @@ fun rookOrBishopThreatens(
  */
 fun triangleKind(a: Double, b: Double, c: Double) : Int {
     val maxSide = maxOf(a, b, c)
+    val triangleType = 2 * maxSide * maxSide - a * a - b * b - c * c
     return when {
-        (2 * maxSide >= a + b + c) -> - 1
-        ((sqr(maxSide) == sqr(a)+sqr(b)) || (sqr(maxSide) == sqr(b)+sqr(c)) || (sqr(maxSide) == sqr(a)+sqr(c))) -> 1
-        ((sqr(maxSide) > sqr(a)+sqr(b)) || (sqr(maxSide) > sqr(b)+sqr(c)) || (sqr(maxSide) > sqr(a) + sqr(c))) -> 2
-        else -> 0
+        (2 * maxSide >= a + b + c) -> -1
+        triangleType < 0 -> 0
+        triangleType > 0 -> 2
+        else -> 1
     }
 }
 
@@ -171,7 +172,5 @@ fun triangleKind(a: Double, b: Double, c: Double) : Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
-    return if ((c > b) || (a > d)) -1
-    else abs(min(b, d) - max(a, c))
-}
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = if ((c > b) || (a > d)) -1 else abs(min(b, d) - max(a, c))
+
