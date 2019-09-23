@@ -157,7 +157,7 @@ fun triangleKind(a: Double, b: Double, c: Double) : Int {
     val maxSide = maxOf(a, b, c)
     val triangleType = 2 * maxSide * maxSide - a * a - b * b - c * c
     return when {
-        (2 * maxSide >= a + b + c) -> -1
+        2 * maxSide >= a + b + c -> -1
         triangleType < 0 -> 0
         triangleType > 0 -> 2
         else -> 1
