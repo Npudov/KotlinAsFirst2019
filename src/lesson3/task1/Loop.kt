@@ -110,30 +110,18 @@ fun fib(n: Int) : Int {
  */
 fun lcm(m: Int, n: Int): Int {
     var m = m
-    var safetym = m
-    var safetyn = n
-    var k = m
     var n = n
-    var i = 2
-    if ((m % n == 0) && (m > n)) return m
-    if ((n % m == 0) && (n > m)) return n
-    if (m > n) {
-     while ((k % m !=0) || (k % n != 0)) {
-         m = safetym
-         m *= i
-         k = m
-         i++
-     }
-    }
-    else {
-        while ((k % m != 0) || (k % n != 0)) {
-            n = safetyn
-            n *= i
-            k = n
-            i++
+    var multiplication = m * n
+    while (n != m) {
+        if (n > m) {
+            n -= m
+        }
+        else {
+            m -= n
         }
     }
-    return k
+    val result = multiplication / n
+    return result
 }
 
 /**
@@ -141,7 +129,7 @@ fun lcm(m: Int, n: Int): Int {
  *
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
-fun minDivisor(n: Int) :Int {
+fun minDivisor(n: Int): Int {
     var d = 0
     for (i in 2..sqrt(n.toDouble()).toInt()) {
         if (n % i == 0) {
@@ -158,10 +146,7 @@ fun minDivisor(n: Int) :Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    val maxd = n / minDivisor(n)
-    return maxd
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая
@@ -176,13 +161,13 @@ fun isCoPrime(m: Int, n: Int): Boolean {
     var maxd = 0
     while (m != n) {
         if (m > n)
-            m = m - n
+            m -= n
         else
-            n = n - m
+            n -= m
     }
     maxd = m
     return when {
-        (maxd ==1) -> true
+        (maxd == 1) -> true
         else -> false
     }
 }
@@ -196,7 +181,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
     for (i in sqrt(m.toDouble()).toInt()..sqrt(n.toDouble()).toInt()) {
-        if ((i*i >= m ) && (i*i <= n)) return true
+        if ((i * i >= m) && (i * i <= n)) return true
         }
     return false
 }
@@ -221,16 +206,14 @@ fun squareBetweenExists(m: Int, n: Int): Boolean {
 fun collatzSteps(x: Int): Int {
     var count = 0
     var x = x
-    while (x != 1) {
-        if (x % 2 == 0) {
-            x /= 2
-            count++
-        }
-        else {
-            x = 3 * x + 1
-            count++
-        }
-        }
+    while (x != 1) if (x % 2 == 0) {
+        x /= 2
+        count++
+    }
+    else {
+        x = 3 * x + 1
+        count++
+    }
     return count
 }
 
@@ -244,27 +227,28 @@ fun collatzSteps(x: Int): Int {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 fun sin(x: Double, eps: Double): Double {
-        var sin = 0.0
-        var n = 1
+        var sin = x
+        var n = 2
         var m = -1.0
-        var number = x
-        while (abs(number) > eps) {
+        var number = x % (2 * PI)
+        var x1 = number
+        while ((abs(number) >= eps) or (n <= 2)) {
             if (m < 0){
                 m = 1.0
             }
             else{
                 m = - 1.0
             }
-            number = m*(x.pow(n)/factorial(n))
+            number = m*(x1.pow(n)/factorial(n))
             sin += number
             n = n + 2
         }
-        var accuracy = 1.0
-        n = 1
+        var accuracy = 10.0
+        n = 10.0
         while (eps *(10 * n) < 1){
                 n *= 10
         }
-        accuracy = n.toDouble()
+        accuracy = n
         return Math.round(sin * accuracy) / accuracy
     }
 
@@ -278,37 +262,34 @@ fun sin(x: Double, eps: Double): Double {
  * Использовать kotlin.math.cos и другие стандартные реализации функции косинуса в этой задаче запрещается.
  */
 fun cos(x: Double, eps: Double): Double {
-        var cos = 1.0
-        var n = 2
-        var m = 1.0
-        var number = x
-        while ((abs(number) > eps) or (n <= 2)) {
-            if (m < 0){
-                m = 1.0
-            }
-            else {
-                m = - 1.0
-            }
-            number = m*(x.pow(n)/factorial(n))
-            if (number == POSITIVE_INFINITY){
-                cos = 1.0
-                break
-            }
-            else if (number == NEGATIVE_INFINITY){
-                cos = -1.0
-                break
-            }
-            cos += number
-            n = n + 2
+    var cos = 1.0
+    var n = 2
+    var m = 1.0
+    // -2π <= x <= 2π
+    //println("x = $x")
+    var number = x % (2 * PI)
+    //println("number = $number")
+    var x1 = number
+    while ((abs(number) > eps) or (n <= 2)) {
+        if (m < 0) {
+            m = 1.0
+        } else {
+            m = -1.0
         }
-        var accuracy = 10.0
-        n = 10
-        while (eps *(10 * n) < 1){
-            n *= 10
-        }
-        accuracy = n.toDouble()
-        return Math.round(cos * accuracy) / accuracy
+        number = m * (x1.pow(n) / factorial(n))
+        cos += number
+        n = n + 2
     }
+    var accuracy = 10.0
+    var k = 10.0
+    //println("k = $k")
+    while (eps * (10 * k) < 1) {
+        k *= 10
+        //println("k = $k")
+    }
+    accuracy = k
+    return Math.round(cos * accuracy) / accuracy
+}
 /**
  * Средняя
  *
@@ -342,11 +323,7 @@ fun revert(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun isPalindrome(n: Int): Boolean {
-    var a = revert(n)
-    if (a == n)
-        return true
-    else
-        return false
+    val n = revert(n)
 }
 
 /**
@@ -359,9 +336,9 @@ fun isPalindrome(n: Int): Boolean {
  */
 fun hasDifferentDigits(n: Int): Boolean {
     var n = n
-    var lastnumber = n % 10
+    val lastnumber = n % 10
     while (n > 0) {
-        var c = n % 10
+        val c = n % 10
         if (c != lastnumber)
             return true
         n /= 10
@@ -379,7 +356,7 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-    var digit = n
+    val digit = n
     var k = 0
     var sm = 0
     var cnt = 0
@@ -410,7 +387,7 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var digit = n
+    val digit = n
     var k = 0
     var sm = 0
     var cnt = 0
@@ -422,7 +399,7 @@ fun fibSequenceDigit(n: Int): Int {
         if (cnt >= digit)
             break
     }
-    if ((n==1) || (n==2)) return 1
+    if (n in 1..2) return 1
     while (cnt >= digit) {
         answer = sm % 10
         sm /= 10
