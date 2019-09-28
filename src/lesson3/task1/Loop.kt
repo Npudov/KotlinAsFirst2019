@@ -227,25 +227,30 @@ fun collatzSteps(x: Int): Int {
  * Использовать kotlin.math.sin и другие стандартные реализации функции синуса в этой задаче запрещается.
  */
 fun sin(x: Double, eps: Double): Double {
-    var sin = 0.0
-    var n = 1
-    var m = -1.0
-    var x1 = abs(x)
-    if (x1 >= 2 * PI) x1 %= 2 * PI
-    while (x1.pow(n)/factorial(n) >= eps) {
-        if (m < 0) {
-            m = 1.0
+        var sin = x
+        var n = 2
+        var m = -1.0
+        var number = x % (2 * PI)
+        var x1 = number
+        while ((abs(number) >= eps) or (n <= 2)) {
+            if (m < 0){
+                m = 1.0
+            }
+            else{
+                m = - 1.0
+            }
+            number = m*(x1.pow(n)/factorial(n))
+            sin += number
+            n = n + 2
         }
-        else {
-            m = - 1.0
+        var accuracy = 10.0
+        n = 10.0
+        while (eps *(10 * n) < 1){
+                n *= 10
         }
-        sin += m * (x1.pow(n)/factorial(n))
-        n += 2
+        accuracy = n
+        return Math.round(sin * accuracy) / accuracy
     }
-    return if (x < 0) sin * (-1.0)
-    else sin
-
-}
 
 /**
  * Средняя
@@ -260,18 +265,30 @@ fun cos(x: Double, eps: Double): Double {
     var cos = 1.0
     var n = 2
     var m = 1.0
-    var x1 = abs(x)
-    if (x1 >= 2 * PI) x1 %= 2 * PI
-    while ( x1.pow(n) / factorial(n) >= eps) {
+    // -2π <= x <= 2π
+    //println("x = $x")
+    var number = x % (2 * PI)
+    //println("number = $number")
+    var x1 = number
+    while ((abs(number) > eps) or (n <= 2)) {
         if (m < 0) {
             m = 1.0
         } else {
             m = -1.0
         }
-        cos += m * (x1.pow(n) / factorial(n))
-        n += 2
+        number = m * (x1.pow(n) / factorial(n))
+        cos += number
+        n = n + 2
     }
-    return cos
+    var accuracy = 10.0
+    var k = 10.0
+    //println("k = $k")
+    while (eps * (10 * k) < 1) {
+        k *= 10
+        //println("k = $k")
+    }
+    accuracy = k
+    return Math.round(cos * accuracy) / accuracy
 }
 /**
  * Средняя
@@ -305,9 +322,9 @@ fun revert(n: Int): Int {
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean =
-    n == revert(n)
-
+fun isPalindrome(n: Int): Boolean {
+    val n = revert(n)
+}
 
 /**
  * Средняя
