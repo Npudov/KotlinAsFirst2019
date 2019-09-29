@@ -89,7 +89,7 @@ fun digitNumber(n: Int): Int {
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int) : Int {
+fun fib(n: Int): Int {
     var result = 0
     var number1 = 1
     var number2 = 1
@@ -115,8 +115,7 @@ fun lcm(m: Int, n: Int): Int {
     while (n != m) {
         if (n > m) {
             n -= m
-        }
-        else {
+        } else {
             m -= n
         }
     }
@@ -182,7 +181,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
 fun squareBetweenExists(m: Int, n: Int): Boolean {
     for (i in sqrt(m.toDouble()).toInt()..sqrt(n.toDouble()).toInt()) {
         if ((i * i >= m) && (i * i <= n)) return true
-        }
+    }
     return false
 }
 
@@ -209,8 +208,7 @@ fun collatzSteps(x: Int): Int {
     while (x != 1) if (x % 2 == 0) {
         x /= 2
         count++
-    }
-    else {
+    } else {
         x = 3 * x + 1
         count++
     }
@@ -232,14 +230,13 @@ fun sin(x: Double, eps: Double): Double {
     var m = -1.0
     var x1 = abs(x)
     if (x1 >= 2 * PI) x1 %= 2 * PI
-    while (x1.pow(n)/factorial(n) >= eps) {
+    while (x1.pow(n) / factorial(n) >= eps) {
         if (m < 0) {
             m = 1.0
+        } else {
+            m = -1.0
         }
-        else {
-            m = - 1.0
-        }
-        sin += m * (x1.pow(n)/factorial(n))
+        sin += m * (x1.pow(n) / factorial(n))
         n += 2
     }
     return if (x < 0) sin * (-1.0)
@@ -261,7 +258,7 @@ fun cos(x: Double, eps: Double): Double {
     var m = 1.0
     var x1 = abs(x)
     if (x1 >= 2 * PI) x1 %= 2 * PI
-    while ( x1.pow(n) / factorial(n) >= eps) {
+    while (x1.pow(n) / factorial(n) >= eps) {
         if (m < 0) {
             m = 1.0
         } else {
@@ -272,6 +269,7 @@ fun cos(x: Double, eps: Double): Double {
     }
     return cos
 }
+
 /**
  * Средняя
  *
@@ -342,15 +340,15 @@ fun squareSequenceDigit(n: Int): Int {
     var sm = 0
     var cnt = 0
     var answer = 0
-    while (k < Int.MAX_VALUE){
+    while (k < Int.MAX_VALUE) {
         k += 1
         sm = k * k
         cnt += digitNumber(sm)
-        if (cnt >= digit){
+        if (cnt >= digit) {
             break
         }
     }
-    while (cnt >= digit){
+    while (cnt >= digit) {
         answer = sm % 10
         sm = sm / 10
         cnt--
