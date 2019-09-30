@@ -108,20 +108,7 @@ fun fib(n: Int): Int {
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int {
-    var m = m
-    var n = n
-    var multiplication = m * n
-    while (n != m) {
-        if (n > m) {
-            n -= m
-        } else {
-            m -= n
-        }
-    }
-    val result = multiplication / n
-    return result
-}
+fun lcm(m: Int, n: Int): Int = m * n / gcd(m, n)
 
 /**
  * Простая
@@ -154,22 +141,8 @@ fun maxDivisor(n: Int): Int = n / minDivisor(n)
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
-    var m = m
-    var n = n
-    var maxd = 0
-    while (m != n) {
-        if (m > n)
-            m -= n
-        else
-            n -= m
-    }
-    maxd = m
-    return when {
-        (maxd == 1) -> true
-        else -> false
-    }
-}
+fun isCoPrime(m: Int, n: Int): Boolean = gcd(m, n) == 1
+
 
 /**
  * Простая
@@ -335,7 +308,7 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun squareSequenceDigit(n: Int): Int {
-    val digit = n
+    val n = n
     var k = 0
     var sm = 0
     var cnt = 0
@@ -344,13 +317,13 @@ fun squareSequenceDigit(n: Int): Int {
         k += 1
         sm = k * k
         cnt += digitNumber(sm)
-        if (cnt >= digit) {
+        if (cnt >= n) {
             break
         }
     }
-    while (cnt >= digit) {
+    while (cnt >= n) {
         answer = sm % 10
-        sm = sm / 10
+        sm /= 10
         cnt--
     }
     return answer
@@ -366,7 +339,7 @@ fun squareSequenceDigit(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun fibSequenceDigit(n: Int): Int {
-    val digit = n
+    val n = n
     var k = 0
     var sm = 0
     var cnt = 0
@@ -375,14 +348,26 @@ fun fibSequenceDigit(n: Int): Int {
         k += 1
         sm = fib(k)
         cnt += digitNumber(sm)
-        if (cnt >= digit)
+        if (cnt >= n)
             break
     }
     if (n in 1..2) return 1
-    while (cnt >= digit) {
+    while (cnt >= n) {
         answer = sm % 10
         sm /= 10
         cnt--
     }
     return answer
+}
+
+fun gcd(m: Int, n: Int): Int {
+    var m = m
+    var n = n
+    while (m != n) {
+        if (m > n)
+            m -= n
+        else
+            n -= m
+    }
+    return m
 }

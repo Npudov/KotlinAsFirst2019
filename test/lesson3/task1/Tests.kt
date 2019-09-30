@@ -186,7 +186,7 @@ class Tests {
     @Tag("Normal")
     fun cos() {
         assertEquals(1.0, cos(0.0, 1e-5), 1e-5)
-        assertEquals(0.0, cos(PI / 2.0, 1e-5), 1e-5)
+        assertEquals(0.0, cos(PI / 2.0,         1e-5), 1e-5)
         assertEquals(-1.0, cos(PI, 1e-5), 1e-5)
         assertEquals(0.0, cos(3.0 * PI / 2.0, 1e-5), 1e-5)
         assertEquals(1.0, cos(100 * PI, 1e-5), 1e-5)
