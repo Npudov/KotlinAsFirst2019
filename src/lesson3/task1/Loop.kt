@@ -247,8 +247,8 @@ fun revert(n: Int): Int {
     var count = 10.0.pow(digitNumber(number) - 1).toInt()
     var answer = 0
     while (number > 0) {
-        answer += count * (n % 10)
-        n /= 10
+        answer += count * (number % 10)
+        number /= 10
         count /= 10
     }
     return answer
