@@ -243,11 +243,11 @@ fun cos(x: Double, eps: Double): Double {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun revert(n: Int): Int {
-    var n = n
-    var count = 10.0.pow(digitNumber(n) - 1).toInt()
+    var number = n
+    var count = 10.0.pow(digitNumber(number) - 1).toInt()
     var answer = 0
-    while (n > 0) {
-        answer += count * n % 10
+    while (number > 0) {
+        answer += count * (n % 10)
         n /= 10
         count /= 10
     }
