@@ -204,11 +204,7 @@ fun sin(x: Double, eps: Double): Double {
     var x1 = abs(x)
     if (x1 >= 2 * PI) x1 %= 2 * PI
     while (x1.pow(n) / factorial(n) >= eps) {
-        if (m < 0) {
-            m = 1.0
-        } else {
-            m = -1.0
-        }
+        m *= -1
         sin += m * (x1.pow(n) / factorial(n))
         n += 2
     }
@@ -232,11 +228,7 @@ fun cos(x: Double, eps: Double): Double {
     var x1 = abs(x)
     if (x1 >= 2 * PI) x1 %= 2 * PI
     while (x1.pow(n) / factorial(n) >= eps) {
-        if (m < 0) {
-            m = 1.0
-        } else {
-            m = -1.0
-        }
+        m *= -1
         cos += m * (x1.pow(n) / factorial(n))
         n += 2
     }
@@ -252,16 +244,12 @@ fun cos(x: Double, eps: Double): Double {
  */
 fun revert(n: Int): Int {
     var n = n
-    var number = n
-    var count = 0
+    var count = 10.0.pow(digitNumber(n) - 1).toInt()
     var answer = 0
     while (n > 0) {
-        count++
+        answer += count * n % 10
         n /= 10
-    }
-    for (i in 1..count) {
-        answer += (number % 10) * 10.0.pow(count - i).toInt()
-        number /= 10
+        count /= 10
     }
     return answer
 }

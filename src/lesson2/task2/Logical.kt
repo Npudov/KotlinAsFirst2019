@@ -22,7 +22,7 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Четырехзначное число назовем счастливым, если сумма первых двух ее цифр равна сумме двух последних.
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
-fun isNumberHappy(number: Int) : Boolean =
+fun isNumberHappy(number: Int): Boolean =
     number / 1000 + (number / 100) % 10 == (number % 100) / 10 + number % 10
 
 
@@ -34,7 +34,7 @@ fun isNumberHappy(number: Int) : Boolean =
  * Считать, что ферзи не могут загораживать друг друга.
  */
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
-    (x1 == x2) || (y1 == y2) || (abs(x2-x1) == abs(y2 - y1))
+    (x1 == x2) || (y1 == y2) || (abs(x2 - x1) == abs(y2 - y1))
 
 
 /**
@@ -44,11 +44,11 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
  * Вернуть число дней в этом месяце этого года по григорианскому календарю.
  */
 fun daysInMonth(month: Int, year: Int): Int = when {
-        month in 1..7 step 2 || month in 8..12 step 2 -> 31
-        month in 4..6 step 2 || month in 9..11 step 2 -> 30
-        month == 2 && year % 4 == 0 && year % 100 != 0 || month == 2 && year % 100 == 0 && year % 400 == 0 -> 29
-        else -> 28
-    }
+    month in 1..7 step 2 || month in 8..12 step 2 -> 31
+    month in 4..6 step 2 || month in 9..11 step 2 -> 30
+    month == 2 && year % 4 == 0 && year % 100 != 0 || month == 2 && year % 100 == 0 && year % 400 == 0 -> 29
+    else -> 28
+}
 
 
 /**
@@ -73,13 +73,12 @@ fun circleInside(
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    return when {
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean =
+    when {
         ((a <= r) && ((b <= s) || (c <= s))) -> true
         ((b <= r) && ((a <= s) || (c <= s))) -> true
         ((c <= r) && ((a <= s) || (b <= s))) -> true
         else -> false
     }
-}
 
 
