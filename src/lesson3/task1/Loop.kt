@@ -94,7 +94,7 @@ fun fib(n: Int): Int {
     var number1 = 1
     var number2 = 1
     if (n in 1..2) return 1
-    else for (i in 3..n) {
+    for (i in 3..n) {
         result = number1 + number2
         number2 = number1
         number1 = result
@@ -116,11 +116,9 @@ fun lcm(m: Int, n: Int): Int = m * n / gcd(m, n)
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    var d = 0
     for (i in 2..sqrt(n.toDouble()).toInt()) {
         if (n % i == 0) {
-            d = i
-            return d
+            return i
         }
     }
     return n
@@ -178,11 +176,12 @@ fun squareBetweenExists(m: Int, n: Int): Boolean {
 fun collatzSteps(x: Int): Int {
     var count = 0
     var x = x
-    while (x != 1) if (x % 2 == 0) {
-        x /= 2
-        count++
-    } else {
-        x = 3 * x + 1
+    while (x != 1) {
+        if (x % 2 == 0) {
+            x /= 2
+        } else {
+            x = 3 * x + 1
+        }
         count++
     }
     return count
@@ -202,10 +201,11 @@ fun sin(x: Double, eps: Double): Double {
     var n = 1
     var m = -1.0
     var x1 = abs(x)
-    if (x1 >= 2 * PI) x1 %= 2 * PI
+    x1 %= 2 * PI
     while (x1.pow(n) / factorial(n) >= eps) {
+        var variable = x1.pow(n) / factorial(n)
         m *= -1
-        sin += m * (x1.pow(n) / factorial(n))
+        sin += m * (variable)
         n += 2
     }
     return if (x < 0) sin * (-1.0)
@@ -226,8 +226,9 @@ fun cos(x: Double, eps: Double): Double {
     var n = 2
     var m = 1.0
     var x1 = abs(x)
-    if (x1 >= 2 * PI) x1 %= 2 * PI
+    x1 %= 2 * PI
     while (x1.pow(n) / factorial(n) >= eps) {
+        var variable = x1.pow(n) / factorial(n)
         m *= -1
         cos += m * (x1.pow(n) / factorial(n))
         n += 2
@@ -301,13 +302,10 @@ fun squareSequenceDigit(n: Int): Int {
     var sm = 0
     var cnt = 0
     var answer = 0
-    while (k < Int.MAX_VALUE) {
+    while (cnt < n) {
         k += 1
         sm = k * k
         cnt += digitNumber(sm)
-        if (cnt >= n) {
-            break
-        }
     }
     while (cnt >= n) {
         answer = sm % 10
@@ -332,12 +330,10 @@ fun fibSequenceDigit(n: Int): Int {
     var sm = 0
     var cnt = 0
     var answer = 0
-    while (k < Int.MAX_VALUE) {
+    while (cnt < n) {
         k += 1
         sm = fib(k)
         cnt += digitNumber(sm)
-        if (cnt >= n)
-            break
     }
     if (n in 1..2) return 1
     while (cnt >= n) {
