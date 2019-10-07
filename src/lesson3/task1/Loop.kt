@@ -200,8 +200,7 @@ fun sin(x: Double, eps: Double): Double {
     var sin = 0.0
     var n = 1
     var m = -1.0
-    var x1 = abs(x)
-    x1 %= 2 * PI
+    val x1= abs(x) % (2 * PI)
     while (x1.pow(n) / factorial(n) >= eps) {
         var variable = x1.pow(n) / factorial(n)
         m *= -1
@@ -225,8 +224,7 @@ fun cos(x: Double, eps: Double): Double {
     var cos = 1.0
     var n = 2
     var m = 1.0
-    var x1 = abs(x)
-    x1 %= 2 * PI
+    val x1 = abs(x) % (2 * PI)
     while (x1.pow(n) / factorial(n) >= eps) {
         var variable = x1.pow(n) / factorial(n)
         m *= -1
