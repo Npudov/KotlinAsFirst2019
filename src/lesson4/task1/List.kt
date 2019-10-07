@@ -250,8 +250,7 @@ fun convert(n: Int, base: Int): List<Int> {
     if (n < base) {
         list.add(n)
         return list
-    }
-    else {
+    } else {
         while (n >= base) {
             residue = n % base
             n /= base
@@ -281,14 +280,12 @@ fun convertToString(n: Int, base: Int): String {
     for (element in list) {
         if (element < 10) {
             answer += element
-        }
-        else {
+        } else {
             answer += string[element - 10]
         }
     }
     return answer
 }
-
 
 
 /**
@@ -303,7 +300,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
     val base = base
     var answer = 0
     for (i in 0 until digits.size) {
-        answer += digits[i] * base.toDouble().pow(digits.size - 1 - i ).toInt()
+        answer += digits[i] * base.toDouble().pow(digits.size - 1 - i).toInt()
     }
     return answer
 }
@@ -327,14 +324,13 @@ fun decimalFromString(str: String, base: Int): Int {
     var list = mutableListOf<Int>()
     for (char in str) {
         if ((char.toInt() >= 'a'.toInt()) && (char.toInt() <= 'z'.toInt())) {
-            val position = string.indexOf(char , 0)
+            val position = string.indexOf(char, 0)
             list.add(position + 10)
-        }
-        else {
+        } else {
             list.add(char.toString().toInt())
         }
     }
-    val answer = decimal(list , base)
+    val answer = decimal(list, base)
     return answer
 }
 
@@ -390,8 +386,7 @@ fun russian(n: Int): String {
                 8 -> res += "восемьсот"
                 9 -> res += "девятьсот"
             }
-            }
-        else if (((factor == 10000) || (factor == 10)) && (k != 0)) {
+        } else if (((factor == 10000) || (factor == 10)) && (k != 0)) {
             res += ' '
             when (k) {
                 1 -> {
@@ -420,20 +415,55 @@ fun russian(n: Int): String {
                 8 -> res += "восемьдесят"
                 9 -> res += "девяносто"
             }
-        }
-        else if (((factor == 1000) || (factor == 1)) && (k != 0)) {
+        } else if (((factor == 1000) || (factor == 1)) && (k != 0)) {
             thousand = true
             res += ' '
             when (k) {
-                1 -> res += if (factor == 1000) { "одна тысяча" } else {"один"}
-                2 -> res += if (factor == 1000) { "две тысячи" } else {"два"}
-                3 -> res += if (factor == 1000) { "три тысячи" } else {"три"}
-                4 -> res += if (factor == 1000) { "четыре тысячи" } else {"четыре"}
-                5 -> res += if (factor == 1000) { "пять тысяч" } else {"пять"}
-                6 -> res += if (factor == 1000) { "шесть тысяч" } else {"шесть"}
-                7 -> res += if (factor == 1000) { "семь тысяч" } else {"семь"}
-                8 -> res += if (factor == 1000) { "восемь тысяч" } else {"восемь"}
-                9 -> res += if (factor == 1000) { "девять тысяч" } else {"девять"}
+                1 -> res += if (factor == 1000) {
+                    "одна тысяча"
+                } else {
+                    "один"
+                }
+                2 -> res += if (factor == 1000) {
+                    "две тысячи"
+                } else {
+                    "два"
+                }
+                3 -> res += if (factor == 1000) {
+                    "три тысячи"
+                } else {
+                    "три"
+                }
+                4 -> res += if (factor == 1000) {
+                    "четыре тысячи"
+                } else {
+                    "четыре"
+                }
+                5 -> res += if (factor == 1000) {
+                    "пять тысяч"
+                } else {
+                    "пять"
+                }
+                6 -> res += if (factor == 1000) {
+                    "шесть тысяч"
+                } else {
+                    "шесть"
+                }
+                7 -> res += if (factor == 1000) {
+                    "семь тысяч"
+                } else {
+                    "семь"
+                }
+                8 -> res += if (factor == 1000) {
+                    "восемь тысяч"
+                } else {
+                    "восемь"
+                }
+                9 -> res += if (factor == 1000) {
+                    "девять тысяч"
+                } else {
+                    "девять"
+                }
             }
         }
         if ((factor == 1000) && (thousand == false) && (res.length > 0)) {
@@ -442,6 +472,6 @@ fun russian(n: Int): String {
         }
         sm -= k * factor
         factor /= 10
-        }
-    return res.trim()
     }
+    return res.trim()
+}
