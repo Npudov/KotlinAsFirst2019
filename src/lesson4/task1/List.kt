@@ -129,13 +129,7 @@ fun abs(v: List<Double>): Double {
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double {
-    val size = list.size
-    return when {
-        size == 0 -> 0.0
-        else -> list.sum() / size
-    }
-}
+fun mean(list: List<Double>): Double = if (list.isEmpty()) 0.0 else list.sum()/ list.size
 
 /**
  * Средняя
@@ -146,8 +140,7 @@ fun mean(list: List<Double>): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    if (list.size == 0) return list
-    val averageSum = list.sum() / list.size
+    val averageSum = mean(list)
     for (i in 0 until list.size) {
         list[i] -= averageSum
     }
@@ -244,19 +237,13 @@ fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*
  */
 fun convert(n: Int, base: Int): List<Int> {
     var n = n
-    var base = base
     var residue = 0
-    var list = mutableListOf<Int>()
-    if (n < base) {
-        list.add(n)
-        return list
-    } else {
-        while (n >= base) {
-            residue = n % base
-            n /= base
-            list.add(residue)
+    val list = mutableListOf<Int>()
+    while (n >= base) {
+        residue = n % base
+        n /= base
+        list.add(residue)
         }
-    }
     list.add(n)
     list.reverse()
     return list
@@ -321,17 +308,16 @@ fun decimalFromString(str: String, base: Int): Int {
     val string = "abcdefghijklmnopqrstuvwxyz"
     val str = str
     val base = base
-    var list = mutableListOf<Int>()
+    val list = mutableListOf<Int>()
     for (char in str) {
-        if ((char.toInt() >= 'a'.toInt()) && (char.toInt() <= 'z'.toInt())) {
+        if ((char >= 'a') && (char <= 'z')) {
             val position = string.indexOf(char, 0)
             list.add(position + 10)
         } else {
             list.add(char.toString().toInt())
         }
     }
-    val answer = decimal(list, base)
-    return answer
+    return decimal(list, base)
 }
 
 /**
@@ -345,8 +331,8 @@ fun decimalFromString(str: String, base: Int): Int {
 fun roman(n: Int): String {
     var n = n
     var result = ""
-    val arab = mutableListOf<Int>(1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000)
-    val rom = mutableListOf<String>("I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M")
+    val arab = listOf(1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000)
+    val rom = listOf("I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M")
     var time = 12
     while (n > 0) {
         while (arab[time] > n) {
@@ -466,7 +452,7 @@ fun russian(n: Int): String {
                 }
             }
         }
-        if ((factor == 1000) && (thousand == false) && (res.length > 0)) {
+        if ((factor == 1000) && !thousand && (res.length > 0)) {
             res += ' '
             res += "тысяч"
         }
