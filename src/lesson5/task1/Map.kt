@@ -150,25 +150,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
  * В выходном списке не должно быть повторяюихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    val a = a
-    val b = b
-    var result = mutableSetOf<String>()
-    if (a.size >= b.size) {
-        for (i in 0 until a.size) {
-            if (a[i] == b[i]) {
-                result.add(a[i])
-            }
-        }
-    } else {
-        for (i in 0 until b.size) {
-            if (a[i] == b[i]) {
-                result.add(a[i])
-            }
-        }
-    }
-    return result.toList()
-}
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = (a.toSet().intersect(b.toSet())).toList()
 
 /**
  * Средняя
@@ -252,23 +234,23 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    val kind = kind
-    val stuff = stuff
     var minimum = Double.MAX_VALUE
     var result = ""
+    var valuecontains = false
     for ((name, value) in stuff) {
         if ((value.first == kind) && (value.second < minimum)) {
             minimum = value.second
             result = name
+            valuecontains = true
         }
     }
-    if (result == "") {
-        return null
+    return if (!valuecontains) {
+        null
     }
     else {
-        return result
+        result
     }
-}
+    }
 
 /**
  * Средняя
@@ -367,8 +349,38 @@ fun hasAnagrams(words: List<String>): Boolean {
  *          "Mikhail" to setOf("Sveta", "Marat")
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
-
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val result = mutableMapOf<String, Set<String>>()
+    val listPeople = mutableListOf<String>() // fiil the list of people who has  friends
+    for ((key, _) in friends) {
+        listPeople.add(key)
+    }
+    for (people in listPeople ) {
+        result[people] = setOf<String>()
+        val findfriends = mutableMapOf<String, Boolean>()
+        for (element in listPeople) { // indicate, that we haven't found friends for this person yet
+            findfriends[element] = false
+        }
+        val querum = mutableListOf(people) // person for himself we find friends
+        while (querum.isNotEmpty()) {
+            val person = querum[0]
+            querum.remove(person)
+            findfriends[person] = true
+            for (friend in friends.getOrDefault(person, setOf())) {
+                if (friend != people) {
+                    result[people] = result[people]!! + friend
+                }
+                if (friend !in listPeople) { // this person don't have friends
+                     result[friend] = setOf()
+                 }
+                else if (findfriends[friend] == false) { // if we haven't found friends for this person
+                    querum.add(friend)
+                }
+            }
+        }
+    }
+    return result
+}
 /**
  * Сложная
  *
@@ -386,7 +398,18 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    for (i in 0 until list.size) {
+        if (list[i] <= number) {
+            for (j in i+1 until list.size) {
+                if (list[j] == number - list[i]) {
+                    return Pair(i,j)
+                }
+            }
+        }
+    }
+    return Pair(-1, -1)
+}
 
 /**
  * Очень сложная
