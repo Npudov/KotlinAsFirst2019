@@ -243,7 +243,7 @@ fun convert(n: Int, base: Int): List<Int> {
         residue = n % base
         n /= base
         list.add(residue)
-        }
+    }
     list.add(n)
     list.reverse()
     return list
