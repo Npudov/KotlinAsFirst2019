@@ -2,6 +2,9 @@
 
 package lesson5.task1
 
+import java.util.Collections.max
+import kotlin.math.max
+
 /**
  * Пример
  *
@@ -92,9 +95,14 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    var answerMap = mutableMapOf<Int, List<String>>()
+    val answerMap = mutableMapOf<Int, MutableList<String>>()
     for ((students, value) in grades) {
-        answerMap[value] = answerMap.getOrDefault(value, listOf<String>()) + students
+        if (answerMap[value] == null) {
+            answerMap[value] = mutableListOf(students)
+        }
+        else {
+            answerMap[value]?.add(students)
+        }
     }
     return answerMap
 }
@@ -110,8 +118,6 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
-    val a = a
-    val b = b
     var cnt = 0
     for ((key, value) in a) {
         if (a[key] == b[key]) {
@@ -170,16 +176,15 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = (a.toSet().in
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
-    var result = mapA.toMutableMap()
-    var b = mapB
-    for ((name, phonenumber) in b) {
+    val result = mapA.toMutableMap()
+    for ((name, phonenumber) in mapB) {
         if (name in result) {
-            if (result[name] == b[name]) {
+            if (result[name] == mapB[name]) {
                 continue
             }
             else {
                 val temporaryA = result[name]
-                val temporaryB = b[name]
+                val temporaryB = mapB[name]
                 result[name] = "$temporaryA, $temporaryB"
             }
         }
@@ -203,13 +208,13 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val stockPrices = stockPrices
     val result = mutableMapOf<String, Double>()
-    val timeMap = mutableMapOf<String, List<Double>>()
+    val timeMap = mutableMapOf<String, MutableList<Double>>()
     for (element in stockPrices) {
         if (element.first in timeMap) {
-            timeMap[element.first] = timeMap[element.first]!! + element.second
+            timeMap[element.first]?.add(element.second)
         }
         else {
-            timeMap[element.first] = listOf(element.second)
+            timeMap[element.first] = mutableListOf(element.second)
         }
     }
     for ((name , value) in timeMap) {
@@ -236,21 +241,19 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     var minimum = Double.MAX_VALUE
     var result = ""
-    var valuecontains = false
     for ((name, value) in stuff) {
         if ((value.first == kind) && (value.second < minimum)) {
             minimum = value.second
             result = name
-            valuecontains = true
         }
     }
-    return if (!valuecontains) {
+    return if (minimum == Double.MAX_VALUE) {
         null
     }
     else {
         result
     }
-    }
+}
 
 /**
  * Средняя
@@ -262,18 +265,13 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    val chars = chars
-    val word = word
-    var newWord = word.toLowerCase()
-    for (words in newWord) {
-        if (words in chars) {
-            continue
-        }
-        else {
-            return false
-        }
+    var string = ""
+    for (chars in chars) {
+        string += chars
     }
-    return true
+    val res = string.toLowerCase().toSet()
+    val word = word.toLowerCase().toSet()
+    return (res == word)
 }
 
 /**
@@ -290,7 +288,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
  */
 fun extractRepeats(list: List<String>): Map<String, Int> {
     val list = list
-    var result = mutableMapOf<String, Int>()
+    val result = mutableMapOf<String, Int>()
     for (element in list) {
         if (element in result) {
             result[element] = result[element]!! + 1
@@ -312,19 +310,12 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-    val words = words
-    for (i in 0 until words.size) {
-        for (j in i+1 until words.size) {
-            val seta = words[i].toSet()
-            val setb = words[j].toSet()
-            if (seta == setb) {
-                return true
-            }
-        }
+    val res = mutableSetOf<Set<Char>>()
+    for (element in words) {
+        res.add(element.toSet())
     }
-    return false
+    return (res.size != words.size)
 }
-
 /**
  * Сложная
  *
@@ -350,37 +341,33 @@ fun hasAnagrams(words: List<String>): Boolean {
  *        )
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
-    val result = mutableMapOf<String, Set<String>>()
-    val listPeople = mutableListOf<String>() // fiil the list of people who has  friends
-    for ((key, _) in friends) {
-        listPeople.add(key)
-    }
-    for (people in listPeople ) {
-        result[people] = setOf<String>()
-        val findfriends = mutableMapOf<String, Boolean>()
-        for (element in listPeople) { // indicate, that we haven't found friends for this person yet
-            findfriends[element] = false
-        }
-        val querum = mutableListOf(people) // person for himself we find friends
-        while (querum.isNotEmpty()) {
-            val person = querum[0]
-            querum.remove(person)
-            findfriends[person] = true
-            for (friend in friends.getOrDefault(person, setOf())) {
-                if (friend != people) {
-                    result[people] = result[people]!! + friend
-                }
-                if (friend !in listPeople) { // this person don't have friends
-                     result[friend] = setOf()
-                 }
-                else if (findfriends[friend] == false) { // if we haven't found friends for this person
-                    querum.add(friend)
+    val result = mutableMapOf<String, MutableSet<String>>()
+    //var verification: MutableMap<String, MutableSet<String>>
+    //var change = true
+    //while (change) {
+        //verification = result
+        for ((people, set) in friends) {
+            if (result[people] == null) {
+                result[people] = set.toMutableSet()
+            } else {
+                result[people]?.addAll(set)
+            }
+            for (friend in set) {
+                if (friend in friends) {
+                    result[people]?.addAll(friends.getValue(friend))
+                } else {
+                    result[friend] = mutableSetOf()
                 }
             }
         }
+        //change = (verification != result)
+    //}
+    for ((key, _) in result) {
+        result[key]?.remove(key)
     }
     return result
 }
+
 /**
  * Сложная
  *
@@ -432,4 +419,43 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    val f = Array(treasures.size + 1, { Array( capacity + 1, {0}) }) //двумерный массив
+    val weigth = Array(treasures.size + 1, {0}) // массив весов
+    val prices = Array(treasures.size + 1, {0}) // массив цен
+    val res= mutableSetOf<String>()
+    var k = 0
+    for (i in treasures){
+        weigth[k+1] = i.value.first
+        prices[k+1] = i.value.second
+        //println(i.value.first)
+        k += 1
+    }
+    //println(treasures.size)
+    for (i in 1..treasures.size){
+        for (j in 0..capacity) {
+            //println("i = $i, j=$j")
+            if (j >= weigth[i]) {
+                //println("i = $i, w[i] = $w[i]")
+                f[i][j] = max(f[i-1][j], f[i-1][j-weigth[i]] + prices[i])
+            }
+            else {
+                //println("i = $i, j=$j")
+                f[i][j] = f[i-1][j]
+            }
+            //println("i = $i, j=$j")
+            //println(f[i][j])
+        }
+    }
+    k = capacity
+    for (i in treasures.size downTo(1)){
+        //println("k= $k, i=$i")
+        if (f[i][k] != f[i-1][k]){
+            //println(w[i])
+            //println(treasures.toList()[i].first)
+            res.add(treasures.toList()[i-1].first)
+            k -= weigth[i]
+        }
+    }
+    return res
+}
