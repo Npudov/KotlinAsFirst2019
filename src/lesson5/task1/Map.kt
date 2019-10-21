@@ -342,29 +342,34 @@ fun hasAnagrams(words: List<String>): Boolean {
  *        )
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
-    val result = mutableMapOf<String, MutableSet<String>>()
-    var verification: MutableMap<String, MutableSet<String>>
-    var change = true
-    while (change) {
-        verification = result
-        for ((people, set) in friends) {
-            if (result[people] == null) {
-                result[people] = set.toMutableSet()
-            } else {
-                result[people]?.addAll(set)
-            }
-            for (friend in set) {
-                if (friend in friends) {
-                    result[people]?.addAll(friends.getValue(friend))
-                } else {
-                    result[friend] = mutableSetOf()
+    val result = mutableMapOf<String, Set<String>>()
+    val listPeople = mutableListOf<String>() // fiil the list of people who has  friends
+    for ((key, _) in friends) {
+        listPeople.add(key)
+    }
+    for (people in listPeople ) {
+        result[people] = setOf<String>()
+        val findfriends = mutableMapOf<String, Boolean>()
+        for (element in listPeople) { // indicate, that we haven't found friends for this person yet
+            findfriends[element] = false
+        }
+        val querum = mutableListOf(people) // person for himself we find friends
+        while (querum.isNotEmpty()) {
+            val person = querum[0]
+            querum.remove(person)
+            findfriends[person] = true
+            for (friend in friends.getOrDefault(person, setOf())) {
+                if (friend != people) {
+                    result[people] = result[people]!! + friend
+                }
+                if (friend !in listPeople) { // this person don't have friends
+                    result[friend] = setOf()
+                }
+                else if (findfriends[friend] == false) { // if we haven't found friends for this person
+                    querum.add(friend)
                 }
             }
         }
-        change = (verification != result)
-    }
-    for ((key, _) in result) {
-        result[key]?.remove(key)
     }
     return result
 }
