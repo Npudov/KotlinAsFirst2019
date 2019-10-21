@@ -270,8 +270,9 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
         string += chars
     }
     val res = string.toLowerCase().toSet()
-    val word = word.toLowerCase().toSet()
-    return (res == word)
+    val word = word.toLowerCase().toSet().toMutableSet()
+    word.removeAll(res)
+    return (word.size == 0)
 }
 
 /**
