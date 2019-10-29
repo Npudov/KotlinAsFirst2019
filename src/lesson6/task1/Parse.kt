@@ -2,6 +2,9 @@
 
 package lesson6.task1
 
+import lesson2.task2.daysInMonth
+import java.util.*
+
 /**
  * Пример
  *
@@ -69,8 +72,21 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
-
+fun dateStrToDigit(str: String): String {
+    val parts = str.split(' ')
+    val list = listOf( "января", "февраля","марта", "апреля", "мая", "июня", "июля", "августа", "сентября",
+        "октября", "ноября", "декабря" )
+    try {
+        val day = parts[0].toInt()
+        val month = if (parts[1] in list) list.indexOf(parts[1]) + 1 else return ""
+        val year = parts[2].toInt()
+        if ((day < 1) || (day > daysInMonth(month, year)) || (year < 1)) return ""
+        return String.format("%02d.%02d.%04d", day, month, year)
+    }
+    catch (e: Exception) {
+        return  ""
+    }
+}
 /**
  * Средняя
  *
@@ -81,7 +97,27 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val parts = digital.split(".")
+    if (parts.size != 3) return ""
+    val map = mapOf("01" to "января", "02" to "февраля", "03" to "марта", "04" to "апреля", "05" to "мая",
+        "06" to "июня", "07" to "июля", "08" to "августа", "09" to "сентября", "10" to "октября", "11" to "ноября",
+        "12" to "декабря")
+    try {
+        val day = parts[0]
+        val month = if (parts[1] in map) map[parts[1]] else return ""
+        val year = parts[2]
+        if (month != null) {
+            if ((day.toInt() < 1) || (day.toInt() > daysInMonth(parts[2].toInt(), year.toInt())) ||
+                (year.toInt() < 1)) return ""
+        }
+        return String.format("%d %s %04d", day.toInt(), month, year.toInt())
+    }
+    catch (e: Exception) {
+        return ""
+    }
+}
+
 
 /**
  * Средняя
@@ -97,7 +133,16 @@ fun dateDigitToStr(digital: String): String = TODO()
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    val result = phone.matches(Regex("""[\d\s\+\-\(\)]*"""))
+    if (!result) return ""
+    val findResult = Regex("""\([^\)]*\)""").find(phone)
+    val findbrackets = findResult?.value
+    if (findbrackets == "()") {
+        return ""
+    }
+    return (Regex("""[^\d\+]*""").replace(phone, ""))
+}
 
 /**
  * Средняя
@@ -109,7 +154,15 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    val result = jumps.matches(Regex("""[\d\s\%\-]*"""))
+    if (!result) return -1
+    val finddigits = Regex("""\d+""").find(jumps)
+    if (finddigits == null) return -1
+    val list = Regex("""[^\d]+""").split(jumps)
+    val answer =  list.map { it.toInt() }.max()
+    return answer!!.toInt()
+}
 
 /**
  * Сложная
