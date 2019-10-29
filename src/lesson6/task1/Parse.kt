@@ -80,7 +80,7 @@ fun dateStrToDigit(str: String): String {
         val day = parts[0].toInt()
         val month = if (parts[1] in list) list.indexOf(parts[1]) + 1 else return ""
         val year = parts[2].toInt()
-        if ((day < 1) || (day > daysInMonth(month, year)) || (year < 1)) return ""
+        if ((day < 1) || (day > daysInMonth(month, year)) || (year < 0)) return ""
         return String.format("%02d.%02d.%d", day, month, year)
     }
     catch (e: Exception) {
@@ -108,8 +108,8 @@ fun dateDigitToStr(digital: String): String {
         val month = if (parts[1] in map) map[parts[1]] else return ""
         val year = parts[2]
         if (month != null) {
-            if ((day.toInt() < 1) || (day.toInt() > daysInMonth(parts[2].toInt(), year.toInt())) ||
-                (year.toInt() < 1)) return ""
+            if ((day.toInt() < 1) || (day.toInt() > daysInMonth(parts[1].toInt(), year.toInt())) ||
+                (year.toInt() < 0)) return ""
         }
         return String.format("%d %s %d", day.toInt(), month, year.toInt())
     }
