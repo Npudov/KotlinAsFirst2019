@@ -82,7 +82,6 @@ fun dateStrToDigit(str: String): String {
         val day = parts[0].toInt()
         val month = if (parts[1] in list) list.indexOf(parts[1]) + 1 else return ""
         val year = parts[2].toInt()
-        //if ((day < 1) || (day > daysInMonth(month, year)) || (year < 0)) return ""
         if (!validity(day, month, year)) return ""
         return String.format("%02d.%02d.%d", day, month, year)
     } catch (e: Exception) {
@@ -113,8 +112,6 @@ fun dateDigitToStr(digital: String): String {
         val month = if (parts[1] in map) map[parts[1]] else return ""
         val year = parts[2]
         if (month != null) {
-            //if ((day.toInt() < 1) || (day.toInt() > daysInMonth(parts[1].toInt(), year.toInt())) ||
-            //(year.toInt() < 0)) return ""
             if (!validity(day.toInt(), parts[1].toInt(), year.toInt())) return ""
         }
         return String.format("%d %s %d", day.toInt(), month, year.toInt())
@@ -140,14 +137,14 @@ fun validity(day: Int, month: Int, year: Int): Boolean = !((day < 1) || (day > d
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String {
-    val result = phone.matches(Regex("""[\d\s\+\-\(\)]*"""))
+    val result = phone.matches(Regex("""[\d\s+\-()]*"""))
     if (!result) return ""
-    val findResult = Regex("""\([^\)]*\)""").find(phone)
+    val findResult = Regex("""\([^)]*\)""").find(phone)
     val findBrackets = findResult?.value
     if (findBrackets == "()") {
         return ""
     }
-    return (Regex("""[^\d\+]*""").replace(phone, ""))
+    return (Regex("""[^\d+]*""").replace(phone, ""))
 }
 
 /**
@@ -161,10 +158,9 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    val result = jumps.matches(Regex("""[\d\s\%\-]*"""))
+    val result = jumps.matches(Regex("""[\d\s%\-]*"""))
     if (!result) return -1
-    val findDigits = Regex("""\d+""").find(jumps)
-    if (findDigits == null) return -1
+    val findDigits = Regex("""\d+""").find(jumps) ?: return -1
     val list = Regex("""[^\d]+""").split(jumps)
     val answer = list.map { it.toInt() }.max()
     return answer!!.toInt()
