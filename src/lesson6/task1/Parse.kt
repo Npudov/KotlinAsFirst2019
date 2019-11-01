@@ -3,6 +3,7 @@
 package lesson6.task1
 
 import lesson2.task2.daysInMonth
+import java.lang.IllegalArgumentException
 import java.util.*
 
 /**
@@ -177,7 +178,23 @@ fun bestLongJump(jumps: String): Int {
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val result = jumps.matches(Regex("""[\d\s+%\-]*""")) // смотрим соответсвует ли формату входная строка
+    if (!result) return -1
+    val findPlus = Regex("""[+]+""").find(jumps) ?: return -1 // смотрим, есть ли у нас удачные попытки
+    val attempt = Regex("""(\d+\s[+%\-]*)""").findAll(jumps) // вычленяю каждую попытку, чтобы загнать её в список
+    val list = attempt.map{it.groupValues[1]}
+    val listResult = mutableListOf<String>()
+    for (element in list) {
+        val findDigits = Regex("""[+]+""").find(element) // ищем число с удачной попыткой
+        if (findDigits != null) {
+            val digit = Regex("""\d+""").find(element)
+                listResult.add(digit!!.value)
+            }
+        }
+    val answer = listResult.map{it.toInt()}.max()
+    return answer!!.toInt()
+}
 
 /**
  * Сложная
@@ -188,7 +205,29 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val result = expression.matches(Regex("""\d+[\d\s+\-]*""")) // проверка на соответсвие формату
+    if (!result) {
+        throw IllegalArgumentException()
+    }
+    val findDoubleOperators = Regex("""[+\-]+\s[+\-]+""").find(expression)
+    if (findDoubleOperators != null) {
+        throw IllegalArgumentException()
+    }
+    val findDoubleDigits = Regex("""\d+\s\d+""").find(expression)
+    if (findDoubleDigits != null) {
+        throw IllegalArgumentException()
+    }
+    val list = Regex("""[\s]""").split(expression)
+    var answer = list[0].toInt()
+    for (i in 1 until list.size - 1 step 2) {
+            val timeoperator = list[i]
+            val digit = list[i+1].toInt()
+            if (timeoperator == "+") answer += digit
+            if (timeoperator == "-") answer -= digit
+    }
+    return answer
+}
 
 /**
  * Сложная
