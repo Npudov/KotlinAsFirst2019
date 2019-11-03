@@ -265,8 +265,8 @@ fun mostExpensive(description: String): String {
         if (Regex("""[\S]+\s""").find(good) != null) {
             name = Regex("""[\S]+""").find(good)?.value ?: ""
         }
-        if (Regex("""(?<=[\S]+\s)([\d]+[\.]?[\d]*)?""").find(good) != null) {
-            price = Regex("""(?<=[\S]+\s)([\d]+[\.]?[\d]*)?""").find(good)?.value?.toDouble() ?: 0.0
+        if (Regex("""(?<=[\S]\s)([\d]+[\.]?[\d]*)""").find(good) != null) {
+            price = Regex("""(?<=[\S]\s)([\d]+[\.]?[\d]*)""").find(good)?.value?.toDouble() ?: 0.0
         }
         if (name == ""){
             return ""
