@@ -5,8 +5,6 @@ package lesson2.task2
 import lesson1.task1.sqr
 import lesson1.task1.trackLength
 import kotlin.math.abs
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 /**
  * Пример

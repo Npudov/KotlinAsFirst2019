@@ -299,7 +299,52 @@ fun mostExpensive(description: String): String {
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val arabiclist = mutableListOf<Int>()
+    //проверяем строку на корректность
+    if (!Regex("""[IVXLCDM]+""").matches(roman)){
+        return -1
+    }
+    val matches = Regex("""([IVXLCDM])""").findAll(roman)
+    val digits = matches.map { it.groupValues[1] }.toList()
+    var cnt = 0
+    for (digit in digits){
+        when (digit[0]) {
+            'I' -> {
+                arabiclist.add(1)
+            }
+            'V' -> {
+                arabiclist.add(5)
+            }
+            'X' -> {
+                arabiclist.add(10)
+            }
+            'L' -> {
+                arabiclist.add(50)
+            }
+            'C' -> {
+                arabiclist.add(100)
+            }
+            'D' -> {
+                arabiclist.add(500)
+            }
+            'M' -> {
+                arabiclist.add(1000)
+            }
+        }
+        cnt ++
+    }
+    var res = 0
+    for (i in 0..arabiclist.size - 1){
+        res += arabiclist[i]
+        if (i > 0) {
+            if (arabiclist[i - 1] < arabiclist[i]) {
+                res = res - 2 * arabiclist[i - 1]
+            }
+        }
+    }
+    return res
+}
 
 /**
  * Очень сложная
@@ -337,4 +382,96 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val result = mutableListOf<Int>()
+    val commandslist:List<Char> = commands.toList()
+    var bracketcnt = 0
+    var commandcnt = 1
+    for (i in 0..cells - 1) {
+        result.add(0)
+    }
+    println("commands=$commands")
+    //проверяем строку на корректность
+    if (!Regex("""[\<\>\+\-\[\]\s]*""").matches(commands)){
+        throw IllegalArgumentException("Param commands has illegal symbols")
+    }
+    //проверяем квадратные скобки
+    for (comand in commandslist){
+        if (comand == '['){
+            bracketcnt ++
+        } else if (comand == ']'){
+            bracketcnt --
+        }
+        if (bracketcnt < 0){
+            throw IllegalArgumentException("Param commands has illegal brackets")
+        }
+    }
+    if (bracketcnt != 0){
+        throw IllegalArgumentException("Param commands has illegal brackets")
+    }
+    var currcommandidx = 0
+    //датчик стоит на ячейке с номером N/2 (округлять вниз)
+    var currresultidx = cells / 2
+    while ((commandcnt <= limit) and (currcommandidx in 0..commandslist.size - 1)){
+        when (commandslist[currcommandidx]){
+            ' ' -> {}
+            '>' -> {
+                currresultidx ++
+            }
+            '<' -> {
+                currresultidx --
+            }
+            '+' -> {
+                result[currresultidx] ++
+            }
+            '-' -> {
+                result[currresultidx] --
+            }
+            '[' -> {
+                var bracketfnd = 0
+                var i = currcommandidx
+                if (result[currresultidx] == 0) {
+                    bracketfnd = 1
+                    while (bracketfnd != 0) {
+                        i ++
+                        if (commandslist[i] == ']') {
+                            bracketfnd --
+                        } else if (commandslist[i] == '['){
+                            bracketfnd ++
+                        }
+                    }
+                    //встали на закрывающую скобку
+                    currcommandidx = i
+                }
+                //println("[")
+                //println("currcommandidx=%currcommandidx")
+            }
+            ']' -> {
+                var bracketfnd = 0
+                var i = currcommandidx
+                if (result[currresultidx] != 0) {
+                    bracketfnd = 1
+                    while (bracketfnd != 0) {
+                        i --
+                        if (commandslist[i] == ']') {
+                            bracketfnd ++
+                        } else if (commandslist[i] == '['){
+                            bracketfnd --
+                        }
+                    }
+                    //встали на открывающую скобку
+                    currcommandidx = i
+                }
+                //println("]")
+                // println("currcommandidx=%currcommandidx")
+            }
+            else -> throw IllegalArgumentException()
+        }
+        currcommandidx ++
+        commandcnt ++
+        if (currresultidx >= result.size){
+            throw IllegalStateException("Out of border")
+        }
+    }
+    return result
+}
