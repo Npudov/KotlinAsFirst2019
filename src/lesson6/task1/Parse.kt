@@ -240,25 +240,8 @@ fun plusMinus(expression: String): Int {
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 fun firstDuplicateIndex(str: String): Int {
-    val str = str.toLowerCase()
-    val list = str.split(' ')
-    var firstChar:String? = null
-    var secondChar:String? = null
-    for (i in 0 until list.size - 1) {
-        if (list[i] == list[i+1]) {
-            firstChar = list[i]
-            secondChar = list[i+1]
-            break
-        }
-    }
-    var result:MatchResult? = null
-    if (firstChar != null) {
-        result = Regex("($firstChar $secondChar)").find(str)
-    }
-    if (result != null) {
-        return result.range.first
-    }
-    return -1
+    val find = Regex("""([\S]+)\s\1""").find(str.toLowerCase()) ?: return -1
+    return find.range.first
 }
 
 /**
@@ -276,7 +259,7 @@ fun mostExpensive(description: String): String {
     val list = description.split("; ")
     val map = mutableMapOf<String, Double>()
     for (element in list) {
-        val findTitle = Regex("""[\wа-яА-ЯёЁ]+""").find(element) ?: return ""
+        val findTitle = Regex("""[\S]+""").find(element) ?: return ""
         val findPrice = Regex("""[\d.\d]+""").find(element) ?: return ""
         val x1 = findTitle.value
         val x2 = findPrice.value.toDouble()
