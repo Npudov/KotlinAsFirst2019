@@ -144,6 +144,8 @@ fun flattenPhoneNumber(phone: String): String {
     if (findBrackets == "()") {
         return ""
     }
+    val findPlus = phone.matches(Regex("""[+]+"""))
+    if (findPlus) return ""
     return (Regex("""[^\d+]*""").replace(phone, ""))
 }
 
@@ -276,7 +278,7 @@ fun mostExpensive(description: String): String {
     for (element in list) {
         val findTitle = Regex("""[\wа-яА-ЯёЁ]+""").find(element) ?: return ""
         val findPrice = Regex("""[\d.\d]+""").find(element) ?: return ""
-        val x1 = findTitle.value.toString()
+        val x1 = findTitle.value
         val x2 = findPrice.value.toDouble()
         map[x1] = x2
     }
