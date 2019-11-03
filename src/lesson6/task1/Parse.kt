@@ -469,7 +469,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         }
         currcommandidx ++
         commandcnt ++
-        if (currresultidx >= result.size){
+        if ((currresultidx >= result.size) || (currresultidx < 0)) {
             throw IllegalStateException("Out of border")
         }
     }
