@@ -276,18 +276,7 @@ fun mostExpensive(description: String): String {
     //println(map.maxBy { it.value })
     return map.maxBy { it.value }?.key!!
 }
-    /*val list = description.split("; ")
-    val map = mutableMapOf<String, Double>()
-    for (element in list) {
-        val findTitle = Regex("""[\S]+""").find(element) ?: return ""
-        val findPrice = Regex("""[\d]+[\.]?[\d]*""").find(element) ?: return ""
-        val x1 = findTitle.value
-        val x2 = findPrice.value.toDouble()
-        map[x1] = x2
-    }
-    return (map.maxBy { it.value }?.key!!)
-}
-*/
+
 /**
  * Сложная
  *
