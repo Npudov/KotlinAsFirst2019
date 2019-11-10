@@ -193,6 +193,7 @@ fun bestHighJump(jumps: String): Int {
     }
     return max
 }
+
 /**
  * Сложная
  *
@@ -218,10 +219,10 @@ fun plusMinus(expression: String): Int {
     val list = Regex("""[\s]""").split(expression)
     var answer = list[0].toInt()
     for (i in 1 until list.size - 1 step 2) {
-            val timeOperator = list[i]
-            val digit = list[i+1].toInt()
-            if (timeOperator == "+") answer += digit
-            if (timeOperator == "-") answer -= digit
+        val timeOperator = list[i]
+        val digit = list[i + 1].toInt()
+        if (timeOperator == "+") answer += digit
+        if (timeOperator == "-") answer -= digit
     }
     return answer
 }
@@ -259,7 +260,7 @@ fun mostExpensive(description: String): String {
     if (((goods.size % 2) != 0) || (goods.isEmpty())) return ""
     for (i in 0..goods.size - 2 step 2) {
         name = goods[i]
-        price = goods[i+1].toDouble()
+        price = goods[i + 1].toDouble()
         if (name == "") return ""
         map[name] = price
     }
@@ -280,12 +281,12 @@ fun mostExpensive(description: String): String {
 fun fromRoman(roman: String): Int {
     val arabicList = mutableListOf<Int>()
     //проверяем строку на корректность
-    if (!Regex("""[IVXLCDM]+""").matches(roman)){
+    if (!Regex("""[IVXLCDM]+""").matches(roman)) {
         return -1
     }
     val matches = Regex("""([IVXLCDM])""").findAll(roman)
     val digits = matches.map { it.groupValues[1] }
-    for (digit in digits){
+    for (digit in digits) {
         when (digit[0]) {
             'I' -> {
                 arabicList.add(1)
@@ -311,7 +312,7 @@ fun fromRoman(roman: String): Int {
         }
     }
     var res = 0
-    for (i in 0 until arabicList.size){
+    for (i in 0 until arabicList.size) {
         res += arabicList[i]
         if (i > 0) {
             if (arabicList[i - 1] < arabicList[i]) {
@@ -360,7 +361,7 @@ fun fromRoman(roman: String): Int {
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val result = mutableListOf<Int>()
-    val commandsList:List<Char> = commands.toList()
+    val commandsList: List<Char> = commands.toList()
     var bracketCnt = 0
     var commandCnt = 1
     for (i in 0 until cells) {
@@ -368,40 +369,41 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     }
     println("commands=$commands")
     //проверяем строку на корректность
-    if (!Regex("""[<>+\-\[\]\s]*""").matches(commands)){
+    if (!Regex("""[<>+\-\[\]\s]*""").matches(commands)) {
         throw IllegalArgumentException("Param commands has illegal symbols")
     }
     //проверяем квадратные скобки
-    for (comand in commandsList){
-        if (comand == '['){
-            bracketCnt ++
-        } else if (comand == ']'){
-            bracketCnt --
+    for (comand in commandsList) {
+        if (comand == '[') {
+            bracketCnt++
+        } else if (comand == ']') {
+            bracketCnt--
         }
-        if (bracketCnt < 0){
+        if (bracketCnt < 0) {
             throw IllegalArgumentException("Param commands has illegal brackets")
         }
     }
-    if (bracketCnt != 0){
+    if (bracketCnt != 0) {
         throw IllegalArgumentException("Param commands has illegal brackets")
     }
     var currcommandidx = 0
     //датчик стоит на ячейке с номером N/2 (округлять вниз)
     var currresultidx = cells / 2
-    while ((commandCnt <= limit) and (currcommandidx in 0 until commandsList.size)){
-        when (commandsList[currcommandidx]){
-            ' ' -> {}
+    while ((commandCnt <= limit) and (currcommandidx in 0 until commandsList.size)) {
+        when (commandsList[currcommandidx]) {
+            ' ' -> {
+            }
             '>' -> {
-                currresultidx ++
+                currresultidx++
             }
             '<' -> {
-                currresultidx --
+                currresultidx--
             }
             '+' -> {
-                result[currresultidx] ++
+                result[currresultidx]++
             }
             '-' -> {
-                result[currresultidx] --
+                result[currresultidx]--
             }
             '[' -> {
                 var bracketfnd = 0
@@ -409,11 +411,11 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 if (result[currresultidx] == 0) {
                     bracketfnd = 1
                     while (bracketfnd != 0) {
-                        i ++
+                        i++
                         if (commandsList[i] == ']') {
-                            bracketfnd --
-                        } else if (commandsList[i] == '['){
-                            bracketfnd ++
+                            bracketfnd--
+                        } else if (commandsList[i] == '[') {
+                            bracketfnd++
                         }
                     }
                     //встали на закрывающую скобку
@@ -428,11 +430,11 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 if (result[currresultidx] != 0) {
                     bracketfnd = 1
                     while (bracketfnd != 0) {
-                        i --
+                        i--
                         if (commandsList[i] == ']') {
-                            bracketfnd ++
-                        } else if (commandsList[i] == '['){
-                            bracketfnd --
+                            bracketfnd++
+                        } else if (commandsList[i] == '[') {
+                            bracketfnd--
                         }
                     }
                     //встали на открывающую скобку
@@ -443,8 +445,8 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             }
             else -> throw IllegalArgumentException()
         }
-        currcommandidx ++
-        commandCnt ++
+        currcommandidx++
+        commandCnt++
         if ((currresultidx >= result.size) || (currresultidx < 0)) {
             throw IllegalStateException("Out of border")
         }
