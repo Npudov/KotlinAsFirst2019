@@ -183,20 +183,16 @@ fun bestHighJump(jumps: String): Int {
     val result = jumps.matches(Regex("""[\d\s+%\-]*""")) // смотрим соответсвует ли формату входная строка
     if (!result) return -1
     val findPlus = Regex("""[+]+""").find(jumps) ?: return -1 // смотрим, есть ли у нас удачные попытки
-    val attempt = Regex("""(\d+\s[+%\-]*)""").findAll(jumps) // вычленяю каждую попытку, чтобы загнать её в список
-    val list = attempt.map{it.groupValues[1]}
-    val listResult = mutableListOf<String>()
-    for (element in list) {
-        val findDigits = Regex("""[+]+""").find(element) // ищем число с удачной попыткой
-        if (findDigits != null) {
-            val digit = Regex("""\d+""").find(element)
-                listResult.add(digit!!.value)
-            }
+    val list = jumps.split(" ")
+    var max = -1
+    for (i in 0 until list.size - 1 step 2) {
+        val currentNumber = list[i].toInt()
+        if ((currentNumber > max) && (list[i + 1].contains('+'))) {
+            max = currentNumber
         }
-    val answer = listResult.map{it.toInt()}.max()
-    return answer!!.toInt()
+    }
+    return max
 }
-
 /**
  * Сложная
  *
@@ -222,10 +218,10 @@ fun plusMinus(expression: String): Int {
     val list = Regex("""[\s]""").split(expression)
     var answer = list[0].toInt()
     for (i in 1 until list.size - 1 step 2) {
-            val timeoperator = list[i]
+            val timeOperator = list[i]
             val digit = list[i+1].toInt()
-            if (timeoperator == "+") answer += digit
-            if (timeoperator == "-") answer -= digit
+            if (timeOperator == "+") answer += digit
+            if (timeOperator == "-") answer -= digit
     }
     return answer
 }
@@ -257,23 +253,16 @@ fun firstDuplicateIndex(str: String): Int {
  */
 fun mostExpensive(description: String): String {
     val map = mutableMapOf<String, Double>()
-    val goods = Regex(""";""").split(description)
-    //println(goods)
+    val goods = Regex("""[;\s]""").split(description).filter { !it.isBlank() }
     var name = ""
     var price = 0.0
-    for (good in goods){
-        if (Regex("""[\S]+\s""").find(good) != null) {
-            name = Regex("""[\S]+""").find(good)?.value ?: ""
-        }
-        if (Regex("""(?<=[\S]\s)([\d]+[\.]?[\d]*)""").find(good) != null) {
-            price = Regex("""(?<=[\S]\s)([\d]+[\.]?[\d]*)""").find(good)?.value?.toDouble() ?: 0.0
-        }
-        if (name == ""){
-            return ""
-        }
-        map.put(name, price)
+    if (((goods.size % 2) != 0) || (goods.isEmpty())) return ""
+    for (i in 0..goods.size - 2 step 2) {
+        name = goods[i]
+        price = goods[i+1].toDouble()
+        if (name == "") return ""
+        map[name] = price
     }
-    //println(map.maxBy { it.value })
     return map.maxBy { it.value }?.key!!
 }
 
@@ -289,46 +278,44 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
-    val arabiclist = mutableListOf<Int>()
+    val arabicList = mutableListOf<Int>()
     //проверяем строку на корректность
     if (!Regex("""[IVXLCDM]+""").matches(roman)){
         return -1
     }
     val matches = Regex("""([IVXLCDM])""").findAll(roman)
-    val digits = matches.map { it.groupValues[1] }.toList()
-    var cnt = 0
+    val digits = matches.map { it.groupValues[1] }
     for (digit in digits){
         when (digit[0]) {
             'I' -> {
-                arabiclist.add(1)
+                arabicList.add(1)
             }
             'V' -> {
-                arabiclist.add(5)
+                arabicList.add(5)
             }
             'X' -> {
-                arabiclist.add(10)
+                arabicList.add(10)
             }
             'L' -> {
-                arabiclist.add(50)
+                arabicList.add(50)
             }
             'C' -> {
-                arabiclist.add(100)
+                arabicList.add(100)
             }
             'D' -> {
-                arabiclist.add(500)
+                arabicList.add(500)
             }
             'M' -> {
-                arabiclist.add(1000)
+                arabicList.add(1000)
             }
         }
-        cnt ++
     }
     var res = 0
-    for (i in 0..arabiclist.size - 1){
-        res += arabiclist[i]
+    for (i in 0 until arabicList.size){
+        res += arabicList[i]
         if (i > 0) {
-            if (arabiclist[i - 1] < arabiclist[i]) {
-                res = res - 2 * arabiclist[i - 1]
+            if (arabicList[i - 1] < arabicList[i]) {
+                res -= 2 * arabicList[i - 1]
             }
         }
     }
@@ -373,36 +360,36 @@ fun fromRoman(roman: String): Int {
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     val result = mutableListOf<Int>()
-    val commandslist:List<Char> = commands.toList()
-    var bracketcnt = 0
-    var commandcnt = 1
-    for (i in 0..cells - 1) {
+    val commandsList:List<Char> = commands.toList()
+    var bracketCnt = 0
+    var commandCnt = 1
+    for (i in 0 until cells) {
         result.add(0)
     }
     println("commands=$commands")
     //проверяем строку на корректность
-    if (!Regex("""[\<\>\+\-\[\]\s]*""").matches(commands)){
+    if (!Regex("""[<>+\-\[\]\s]*""").matches(commands)){
         throw IllegalArgumentException("Param commands has illegal symbols")
     }
     //проверяем квадратные скобки
-    for (comand in commandslist){
+    for (comand in commandsList){
         if (comand == '['){
-            bracketcnt ++
+            bracketCnt ++
         } else if (comand == ']'){
-            bracketcnt --
+            bracketCnt --
         }
-        if (bracketcnt < 0){
+        if (bracketCnt < 0){
             throw IllegalArgumentException("Param commands has illegal brackets")
         }
     }
-    if (bracketcnt != 0){
+    if (bracketCnt != 0){
         throw IllegalArgumentException("Param commands has illegal brackets")
     }
     var currcommandidx = 0
     //датчик стоит на ячейке с номером N/2 (округлять вниз)
     var currresultidx = cells / 2
-    while ((commandcnt <= limit) and (currcommandidx in 0..commandslist.size - 1)){
-        when (commandslist[currcommandidx]){
+    while ((commandCnt <= limit) and (currcommandidx in 0 until commandsList.size)){
+        when (commandsList[currcommandidx]){
             ' ' -> {}
             '>' -> {
                 currresultidx ++
@@ -423,9 +410,9 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                     bracketfnd = 1
                     while (bracketfnd != 0) {
                         i ++
-                        if (commandslist[i] == ']') {
+                        if (commandsList[i] == ']') {
                             bracketfnd --
-                        } else if (commandslist[i] == '['){
+                        } else if (commandsList[i] == '['){
                             bracketfnd ++
                         }
                     }
@@ -442,9 +429,9 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                     bracketfnd = 1
                     while (bracketfnd != 0) {
                         i --
-                        if (commandslist[i] == ']') {
+                        if (commandsList[i] == ']') {
                             bracketfnd ++
-                        } else if (commandslist[i] == '['){
+                        } else if (commandsList[i] == '['){
                             bracketfnd --
                         }
                     }
@@ -457,7 +444,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             else -> throw IllegalArgumentException()
         }
         currcommandidx ++
-        commandcnt ++
+        commandCnt ++
         if ((currresultidx >= result.size) || (currresultidx < 0)) {
             throw IllegalStateException("Out of border")
         }
