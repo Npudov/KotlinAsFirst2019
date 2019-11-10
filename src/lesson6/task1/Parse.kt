@@ -368,11 +368,9 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         result.add(0)
     }
     println("commands=$commands")
-    //проверяем строку на корректность
     if (!Regex("""[<>+\-\[\]\s]*""").matches(commands)) {
         throw IllegalArgumentException("Param commands has illegal symbols")
     }
-    //проверяем квадратные скобки
     for (comand in commandsList) {
         if (comand == '[') {
             bracketCnt++
@@ -387,7 +385,6 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         throw IllegalArgumentException("Param commands has illegal brackets")
     }
     var currcommandidx = 0
-    //датчик стоит на ячейке с номером N/2 (округлять вниз)
     var currresultidx = cells / 2
     while ((commandCnt <= limit) and (currcommandidx in 0 until commandsList.size)) {
         when (commandsList[currcommandidx]) {
@@ -418,11 +415,8 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                             bracketfnd++
                         }
                     }
-                    //встали на закрывающую скобку
                     currcommandidx = i
                 }
-                //println("[")
-                //println("currcommandidx=%currcommandidx")
             }
             ']' -> {
                 var bracketfnd = 0
@@ -437,11 +431,8 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                             bracketfnd--
                         }
                     }
-                    //встали на открывающую скобку
                     currcommandidx = i
                 }
-                //println("]")
-                // println("currcommandidx=%currcommandidx")
             }
             else -> throw IllegalArgumentException()
         }
