@@ -53,7 +53,24 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val map = mutableMapOf<String, Int>()
+    val lines = File(inputName).readLines()
+    for (element in substrings) {
+        val symbols = "-().^+[]" // символы , которые нуждаются в экранировании, экранирую
+        var pattern = element.toLowerCase()
+        for (symbol in symbols) {
+            pattern = pattern.replace(symbol.toString(), """\""" + symbol)
+        }
+        val matchResult = Regex(pattern = "(?=$pattern)").findAll(lines.toString().toLowerCase())
+        val cnt = matchResult.map { it.value }.count()
+        map[element] = cnt
+        if (matchResult == null) {
+            map[element] = 0
+        }
+    }
+    return map
+}
 
 
 /**
@@ -70,8 +87,22 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val lines = File(inputName).readLines()
+    var str = ""
+    for (line in lines) {
+        str = Regex("""(?<=[жчшщЖЧШЩ])[ы]""").replace(line, "и")
+        str = Regex("""(?<=[жчшщЖЧШЩ])[я]""").replace(str, "а")
+        str = Regex("""(?<=[жчшщЖЧШЩ])[ю]""").replace(str, "у")
+        str = Regex("""(?<=[жчшщЖЧШЩ])[Ы]""").replace(str, "И")
+        str = Regex("""(?<=[жчшщЖЧШЩ])[Я]""").replace(str, "А")
+        str = Regex("""(?<=[жчшщЖЧШЩ])[Ю]""").replace(str, "У")
+        writer.write(str)
+        writer.newLine()
+    }
+    writer.close()
 }
+
 
 /**
  * Средняя
@@ -91,7 +122,24 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val lines = File(inputName).readLines()
+    var maxLengthStr = -1
+    for (line in lines) {
+        val currentLine = line.trim()
+        val currentLength = currentLine.length
+        if (currentLength > maxLengthStr) {
+            maxLengthStr = currentLength
+        }
+    }
+    for (line in lines) {
+        val lengthLine = line.trim().length
+        val cntSpace = (maxLengthStr - lengthLine) / 2
+        val str = line.padStart(lengthLine + cntSpace)
+        writer.write(str)
+        writer.newLine()
+    }
+    writer.close()
 }
 
 /**
@@ -143,7 +191,35 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  * Ключи в ассоциативном массиве должны быть в нижнем регистре.
  *
  */
-fun top20Words(inputName: String): Map<String, Int> = TODO()
+fun top20Words(inputName: String): Map<String, Int> {
+    val map = mutableMapOf<String, Int>()
+    val lines = File(inputName).readLines()
+    for (line in lines) {
+        val str = line.toLowerCase()
+        var listLineWords = Regex("""[^А-Яа-яёЁA-Za-z]+""").split(str)
+        listLineWords = listLineWords.filter { !it.isBlank() }
+        for (element in listLineWords) {
+            if (element !in map) {
+                map[element] = 1
+            }
+            else {
+                map[element] = map[element]!! + 1
+            }
+        }
+    }
+    val lastMap = map.toList().sortedByDescending { (key, value) -> value }.toMap()
+    if (lastMap.size <= 20) return lastMap
+    else {
+        var cnt = 0
+        val answer = mutableMapOf<String, Int>()
+        for ((key, value) in lastMap) {
+            answer[key] = value
+            cnt++
+            if (cnt == 20) break
+        }
+        return answer
+    }
+}
 
 /**
  * Средняя
@@ -181,7 +257,31 @@ fun top20Words(inputName: String): Map<String, Int> = TODO()
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val lines = File(inputName).readLines()
+    val dict = mutableMapOf<Char, String>()
+    for ((key, value) in dictionary) {
+        dict[key.toLowerCase()] = value.toLowerCase()
+    }
+    var str = ""
+    for (line in lines) {
+        for (char in line) {
+            if (dict[char.toLowerCase()] != null) {
+                if (char.isUpperCase()) {
+                    str += dict[char.toLowerCase()]?.capitalize()
+                } else {
+                    str += dict[char]
+                }
+            }
+            else {
+                str += char
+            }
+        }
+        writer.write(str)
+        writer.newLine()
+        str = ""
+    }
+    writer.close()
 }
 
 /**
@@ -194,7 +294,7 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  * Если во входном файле имеется несколько слов с одинаковой длиной, в которых все буквы разные,
  * в выходной файл следует вывести их все через запятую.
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
- *
+ *0
  * Пример входного файла:
  * Карминовый
  * Боязливый
@@ -209,7 +309,33 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val lines = File(inputName).readLines()
+    var set: MutableSet<Char>
+    var str = ""
+    var max = -1
+    val list = mutableListOf<String>()
+    val newListWords = mutableListOf<String>()
+    for (line in lines) {
+        str = line.toLowerCase()
+        set = str.toSet().toMutableSet()
+        if (set.size == line.length) {
+            list.add(line)
+        }
+    }
+    var word = ""
+    for (i in 0 until list.size) {
+        if (list[i].length == max) {
+            newListWords.add(list[i])
+        }
+        if (list[i].length > max) {
+            newListWords.clear()
+            newListWords.add(list[i])
+            max = list[i].length
+        }
+    }
+    writer.write(newListWords.joinToString())
+    writer.close()
 }
 
 /**
@@ -258,7 +384,80 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val lines = File(inputName).readLines()
+    val stack = mutableListOf<String>() // храним открывающиеся тэги
+    var currentLine = ""
+    var strIsEmpty = false
+    stack.add("<html>")
+    stack.add("<body>")
+    stack.add("<p>")
+    currentLine = "<html><body><p>"
+    for (line in lines) { // бежим по строке
+        currentLine += line
+        val str = line
+        if (str == "") {
+            strIsEmpty = true
+            stack.remove("<p>")
+            currentLine += createCloseTag("<p>")
+        }
+        else if ((str != "") && strIsEmpty) {
+            strIsEmpty = false
+            stack.add("<p>")
+            currentLine = "<p>$currentLine"
+        }
+        val findSymbols = Regex("""(\*\*|\*|~~)""").findAll(currentLine)
+        val list = findSymbols.map { it.groupValues[1] }
+        for (element in list) {
+            if (element == "*") {
+                if (stack[stack.size - 1] != "<i>") {
+                    stack.add("<i>")
+                    currentLine = currentLine.replaceFirst(element , "<i>")
+                }
+                else {
+                    stack.remove("<i>")
+                    val tag = createCloseTag("<i>")
+                    currentLine = currentLine.replaceFirst(element , tag)
+                }
+            }
+            if (element == "**") {
+                if (stack[stack.size - 1] != "<b>") {
+                    stack.add("<b>")
+                    currentLine = currentLine.replaceFirst(element , "<b>")
+                }
+                else {
+                    stack.remove("<b>")
+                    val tag = createCloseTag("<b>")
+                    currentLine = currentLine.replaceFirst(element , tag)
+                }
+            }
+            if (element == "~~") {
+                if (stack[stack.size - 1] != "<s>") {
+                    stack.add("<s>")
+                    currentLine = currentLine.replaceFirst(element , "<s>")
+                }
+                else {
+                    stack.remove("<s>")
+                    val tag = createCloseTag("<s>")
+                    currentLine = currentLine.replaceFirst(element , tag)
+                }
+            }
+        }
+        writer.write(currentLine)
+        writer.newLine()
+        currentLine = ""
+    }
+    for (tags in stack.reversed()) {
+        currentLine += createCloseTag(tags)
+    }
+    writer.write(currentLine)
+    writer.close()
+}
+
+fun createCloseTag(openTag: String) : String { // преобразование открытого тэга в закрытый
+    val tag = Regex("""([A-Za-z]+)""").find(openTag)
+    val answer = "<" + "/" + tag?.value + ">"
+    return answer
 }
 
 /**
@@ -361,7 +560,108 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlLists(inputName: String, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val lines = File(inputName).readLines()
+    val stack = mutableListOf<Pair<String, Int>>()
+    var currentLine = ""
+    var level = 0
+    var firstIteration = false
+    var timeStr = ""
+    stack.add(Pair("<html>", level))
+    stack.add(Pair("<body>", level))
+    currentLine = ("<html><body>")
+    for (line in lines) {
+        currentLine += line
+        val findSymbols = Regex("""(\*|[\d]+\.)""").find(line)
+        val range = findSymbols?.range?.first
+        if (!firstIteration) { // отдельная обработка первой итерации
+            firstIteration = true
+            if (findSymbols?.value == "*") {
+                stack.add(Pair("<ul>", level))
+                stack.add(Pair("<li>", level))
+                currentLine = currentLine.replaceFirst("*", "<ul><li>")
+                continue
+            } else {
+                stack.add(Pair("<ol>", level))
+                stack.add(Pair("<li>", level))
+                if (findSymbols != null) {
+                    currentLine = currentLine.replaceFirst(findSymbols.value, "<ol><li>")
+                }
+                continue
+            }
+        }
+        if (range == 4 * level) {
+            if (findSymbols.value == "*") { //элемент ненумерованного списка
+                if (stack[stack.size - 1] != Pair("<li>", level)) {
+                    stack.add(Pair("<li>", level))
+                    currentLine = currentLine.replaceFirst("*", "<li>")
+                } else {
+                    stack.remove(Pair("<li>", level))
+                    currentLine = "</li>$currentLine"
+                    stack.add(Pair("<li>", level))
+                    currentLine = currentLine.replaceFirst("*", "<li>")
+                }
+            }
+            else { //элемент нумерованного списка
+                if (stack[stack.size - 1] != Pair("<li>", level)) {
+                    stack.add(Pair("<li>", level))
+                    currentLine = currentLine.replaceFirst(findSymbols.value, "<li>")
+                } else {
+                    stack.remove(Pair("<li>", level))
+                    currentLine = "</li>$currentLine"
+                    stack.add(Pair("<li>", level))
+                    currentLine = currentLine.replaceFirst(findSymbols.value, "<li>")
+                }
+            }
+        }
+        if (range != null) {
+            if (range > 4 * level) { // список углубляется
+                level = range / 4
+                if (findSymbols.value == "*") {
+                    stack.add(Pair("<ul>", level))
+                    stack.add(Pair("<li>", level))
+                    currentLine = currentLine.replaceFirst("*", "<ul><li>")
+                } else {
+                    stack.add(Pair("<ol>", level))
+                    stack.add(Pair("<li>", level))
+                    currentLine = currentLine.replaceFirst(findSymbols.value, "<ol><li>")
+                }
+            }
+        }
+        if (range != null) {
+            if (range < 4 * level) {
+                level = range / 4
+                if (findSymbols.value == "*") {
+                    while (stack[stack.size - 1].second > level) {
+                        timeStr += createCloseTag(stack[stack.size - 1].first)
+                        stack.removeAt(stack.size - 1)
+                    }
+                    stack.remove(Pair("<li>", level))
+                    stack.add(Pair("<li>", level))
+                    currentLine = currentLine.replaceFirst("*", "<li>")
+                    currentLine = "$timeStr</li>$currentLine"
+                } else {
+                    while (stack[stack.size - 1].second > level) {
+                        timeStr += createCloseTag(stack[stack.size - 1].first)
+                        stack.removeAt(stack.size - 1)
+                    }
+                    stack.remove(Pair("<li>", level))
+                    stack.add(Pair("<li>", level))
+                    currentLine = currentLine.replaceFirst(findSymbols.value, "<li>")
+                    currentLine = "$timeStr</li>$currentLine"
+                }
+            }
+        }
+            writer.write(currentLine)
+            writer.newLine()
+            currentLine = ""
+            timeStr = ""
+        }
+    for (element in stack.reversed()) {
+        currentLine += createCloseTag(element.first)
+    }
+    writer.write(currentLine)
+    writer.close()
 }
 
 /**
@@ -402,7 +702,28 @@ fun markdownToHtml(inputName: String, outputName: String) {
  *
  */
 fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
-    TODO()
+    val writer = File(outputName).bufferedWriter()
+    val list = mutableListOf<String>()
+    val len = lhv.toString().length + rhv.toString().length
+    list.add(lhv.toString().padStart(len)) // первая строка
+    list.add("*"+ rhv.toString().padStart(len - 1)) //вторая строка
+    list.add("".padStart(lhv.toString().length + rhv.toString().length, '-')) // Третья строка
+    var cnt = 0
+    var sign = ""
+    for (digit in rhv.toString().reversed() ) {
+        sign = if (cnt > 0) "+" else ""
+        val sm = lhv * digit.toString().toInt()
+        list.add(sign + sm.toString().padStart(len - cnt - sign.length))
+        cnt++
+    }
+    list.add("".padStart(lhv.toString().length + rhv.toString().length, '-'))
+    val composition = lhv * rhv
+    list.add(composition.toString().padStart(len))
+    for (element in list) {
+        writer.write(element)
+        writer.newLine()
+    }
+    writer.close()
 }
 
 
