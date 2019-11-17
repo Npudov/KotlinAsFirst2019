@@ -135,13 +135,12 @@ fun centerFile(inputName: String, outputName: String) {
     for (line in lines) {
         val lengthLine = line.trim().length
         val cntSpace = (maxLengthStr - lengthLine) / 2
-        val str = line.padStart(lengthLine + cntSpace)
+        val str = line.trim().padStart(lengthLine + cntSpace)
         writer.write(str)
         writer.newLine()
     }
     writer.close()
 }
-
 /**
  * Сложная
  *
@@ -265,16 +264,20 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
     }
     var str = ""
     for (line in lines) {
-        for (char in line) {
-            if (dict[char.toLowerCase()] != null) {
-                if (char.isUpperCase()) {
-                    str += dict[char.toLowerCase()]?.capitalize()
+        if ((line.isEmpty()) && (dict['\n'] != null)) {
+            str += dict['\n']
+        }
+        else {
+            for (char in line) {
+                if (dict[char.toLowerCase()] != null) {
+                    if (char.isUpperCase()) {
+                        str += dict[char.toLowerCase()]?.capitalize()
+                    } else {
+                        str += dict[char]
+                    }
                 } else {
-                    str += dict[char]
+                    str += char
                 }
-            }
-            else {
-                str += char
             }
         }
         writer.write(str)
@@ -396,7 +399,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     for (line in lines) { // бежим по строке
         currentLine += line
         val str = line
-        if (str == "") {
+        if ((str == "") && !strIsEmpty) {
             strIsEmpty = true
             stack.remove("<p>")
             currentLine += createCloseTag("<p>")
@@ -704,10 +707,11 @@ fun markdownToHtml(inputName: String, outputName: String) {
 fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     val list = mutableListOf<String>()
-    val len = lhv.toString().length + rhv.toString().length
+    val len = (lhv * rhv).toString().length + 1
+    //val len = lhv.toString().length + rhv.toString().length
     list.add(lhv.toString().padStart(len)) // первая строка
     list.add("*"+ rhv.toString().padStart(len - 1)) //вторая строка
-    list.add("".padStart(lhv.toString().length + rhv.toString().length, '-')) // Третья строка
+    list.add("".padStart(len, '-')) // Третья строка
     var cnt = 0
     var sign = ""
     for (digit in rhv.toString().reversed() ) {
@@ -716,7 +720,7 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
         list.add(sign + sm.toString().padStart(len - cnt - sign.length))
         cnt++
     }
-    list.add("".padStart(lhv.toString().length + rhv.toString().length, '-'))
+    list.add("".padStart(len, '-'))
     val composition = lhv * rhv
     list.add(composition.toString().padStart(len))
     for (element in list) {

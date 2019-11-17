@@ -102,6 +102,7 @@ Basic, Ruby, Swift.
     @Tag("Normal")
     fun centerFile() {
         centerFile("input/center_in1.txt", "temp.txt")
+        //centerFile("input/centerfile.txt", "temp.txt")
         assertFileContent(
             "temp.txt",
             """              Съешь же ещё этих мягких французских булок, да выпей чаю.
@@ -196,6 +197,11 @@ Basic, Ruby, Swift.
             mapOf('з' to "zz", 'р' to "r", 'д' to "d", 'й' to "y", 'М' to "m", 'и' to "yy", '!' to "!!!"),
             "temp.txt"
         )
+        /*transliterate(
+            "input/transliterate.txt",
+            mapOf('\n' to "'i"),
+            "temp.txt"
+        )*/
         assertFileContent("temp.txt", "Zzdrавствуy,\nmyyr!!!")
         File("temp.txt").delete()
 
