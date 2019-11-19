@@ -372,7 +372,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     for ((index, line)  in lines.withIndex()) { // бежим по строке
         currentLine += line
         val str = line
-        if ((str == "") && !strIsEmpty) {
+        if (((str == "") && !strIsEmpty) && (index > 0)) {
             strIsEmpty = true
             continue
         } else if ((str != "") && strIsEmpty) {
