@@ -65,9 +65,6 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
         val matchResult = Regex(pattern = "(?=$pattern)").findAll(lines.toString().toLowerCase())
         val cnt = matchResult.map { it.value }.count()
         map[element] = cnt
-        if (matchResult == null) {
-            map[element] = 0
-        }
     }
     return map
 }
@@ -89,14 +86,18 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
 fun sibilants(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     val lines = File(inputName).readLines()
-    var str = ""
     for (line in lines) {
-        str = Regex("""(?<=[жчшщЖЧШЩ])[ы]""").replace(line, "и")
-        str = Regex("""(?<=[жчшщЖЧШЩ])[я]""").replace(str, "а")
-        str = Regex("""(?<=[жчшщЖЧШЩ])[ю]""").replace(str, "у")
-        str = Regex("""(?<=[жчшщЖЧШЩ])[Ы]""").replace(str, "И")
-        str = Regex("""(?<=[жчшщЖЧШЩ])[Я]""").replace(str, "А")
-        str = Regex("""(?<=[жчшщЖЧШЩ])[Ю]""").replace(str, "У")
+        val str = line.replace(Regex("""(?<=[жчшщЖЧШЩ])[ыяюЫЯЮ]""")) {
+            when (it.value) {
+                "ы" -> "и"
+                "я" -> "а"
+                "ю" -> "у"
+                "Ы" -> "И"
+                "Я" -> "А"
+                "Ю" -> "У"
+                else -> it.value
+            }
+        }
         writer.write(str)
         writer.newLine()
     }
@@ -141,6 +142,7 @@ fun centerFile(inputName: String, outputName: String) {
     }
     writer.close()
 }
+
 /**
  * Сложная
  *
@@ -200,24 +202,12 @@ fun top20Words(inputName: String): Map<String, Int> {
         for (element in listLineWords) {
             if (element !in map) {
                 map[element] = 1
-            }
-            else {
+            } else {
                 map[element] = map[element]!! + 1
             }
         }
     }
-    val lastMap = map.toList().sortedByDescending { (key, value) -> value }.toMap()
-    if (lastMap.size <= 20) return lastMap
-    else {
-        var cnt = 0
-        val answer = mutableMapOf<String, Int>()
-        for ((key, value) in lastMap) {
-            answer[key] = value
-            cnt++
-            if (cnt == 20) break
-        }
-        return answer
-    }
+    return map.toList().sortedByDescending { (key, value) -> value }.take(20).toMap()
 }
 
 /**
@@ -257,32 +247,19 @@ fun top20Words(inputName: String): Map<String, Int> {
  */
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
     val writer = File(outputName).bufferedWriter()
-    val lines = File(inputName).readLines()
+    val lines = File(inputName).readText()
     val dict = mutableMapOf<Char, String>()
     for ((key, value) in dictionary) {
         dict[key.toLowerCase()] = value.toLowerCase()
     }
-    var str = ""
-    for (line in lines) {
-        if ((line.isEmpty()) && (dict['\n'] != null)) {
-            str += dict['\n']
-        }
-        else {
-            for (char in line) {
-                if (dict[char.toLowerCase()] != null) {
-                    if (char.isUpperCase()) {
-                        str += dict[char.toLowerCase()]?.capitalize()
-                    } else {
-                        str += dict[char]
-                    }
-                } else {
-                    str += char
-                }
-            }
+    for (char in lines) {
+        var str = ""
+        if (dict[char.toLowerCase()] != null) {
+            str += if (char.isUpperCase()) dict[char.toLowerCase()]?.capitalize() else dict[char]
+        } else {
+            str += char
         }
         writer.write(str)
-        writer.newLine()
-        str = ""
     }
     writer.close()
 }
@@ -314,19 +291,16 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     val lines = File(inputName).readLines()
-    var set: MutableSet<Char>
-    var str = ""
     var max = -1
     val list = mutableListOf<String>()
     val newListWords = mutableListOf<String>()
     for (line in lines) {
-        str = line.toLowerCase()
-        set = str.toSet().toMutableSet()
+        val str = line.toLowerCase()
+        val set = str.toSet().toMutableSet()
         if (set.size == line.length) {
             list.add(line)
         }
     }
-    var word = ""
     for (i in 0 until list.size) {
         if (list[i].length == max) {
             newListWords.add(list[i])
@@ -373,15 +347,15 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  *
  * Соответствующий выходной файл:
 <html>
-    <body>
-        <p>
-            Lorem ipsum <i>dolor sit amet</i>, consectetur <b>adipiscing</b> elit.
-            Vestibulum lobortis. <s>Est vehicula rutrum <i>suscipit</i></s>, ipsum <s>lib</s>ero <i>placerat <b>tortor</b></i>.
-        </p>
-        <p>
-            Suspendisse <s>et elit in enim tempus iaculis</s>.
-        </p>
-    </body>
+<body>
+<p>
+Lorem ipsum <i>dolor sit amet</i>, consectetur <b>adipiscing</b> elit.
+Vestibulum lobortis. <s>Est vehicula rutrum <i>suscipit</i></s>, ipsum <s>lib</s>ero <i>placerat <b>tortor</b></i>.
+</p>
+<p>
+Suspendisse <s>et elit in enim tempus iaculis</s>.
+</p>
+</body>
 </html>
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
@@ -390,60 +364,37 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     val lines = File(inputName).readLines()
     val stack = mutableListOf<String>() // храним открывающиеся тэги
-    var currentLine = ""
     var strIsEmpty = false
     stack.add("<html>")
     stack.add("<body>")
     stack.add("<p>")
-    currentLine = "<html><body><p>"
-    for (line in lines) { // бежим по строке
+    var currentLine = "<html><body><p>"
+    for ((index, line)  in lines.withIndex()) { // бежим по строке
         currentLine += line
         val str = line
         if ((str == "") && !strIsEmpty) {
             strIsEmpty = true
-            stack.remove("<p>")
-            currentLine += createCloseTag("<p>")
-        }
-        else if ((str != "") && strIsEmpty) {
+            continue
+        } else if ((str != "") && strIsEmpty) {
             strIsEmpty = false
-            stack.add("<p>")
-            currentLine = "<p>$currentLine"
+            if (stack[stack.size - 1] == "<p>") {
+                currentLine = createCloseTag("<p>") + "<p>" + currentLine
+            }
+            else {
+                currentLine = "<p>$currentLine"
+            }
         }
         val findSymbols = Regex("""(\*\*|\*|~~)""").findAll(currentLine)
         val list = findSymbols.map { it.groupValues[1] }
         for (element in list) {
             if (element == "*") {
-                if (stack[stack.size - 1] != "<i>") {
-                    stack.add("<i>")
-                    currentLine = currentLine.replaceFirst(element , "<i>")
-                }
-                else {
-                    stack.remove("<i>")
-                    val tag = createCloseTag("<i>")
-                    currentLine = currentLine.replaceFirst(element , tag)
-                }
+                currentLine = replaceTag(element, currentLine, stack, "<i>")
             }
             if (element == "**") {
-                if (stack[stack.size - 1] != "<b>") {
-                    stack.add("<b>")
-                    currentLine = currentLine.replaceFirst(element , "<b>")
-                }
-                else {
-                    stack.remove("<b>")
-                    val tag = createCloseTag("<b>")
-                    currentLine = currentLine.replaceFirst(element , tag)
-                }
+                currentLine = replaceTag(element, currentLine, stack, "<b>")
             }
             if (element == "~~") {
-                if (stack[stack.size - 1] != "<s>") {
-                    stack.add("<s>")
-                    currentLine = currentLine.replaceFirst(element , "<s>")
-                }
-                else {
-                    stack.remove("<s>")
-                    val tag = createCloseTag("<s>")
-                    currentLine = currentLine.replaceFirst(element , tag)
-                }
+                currentLine = replaceTag(element, currentLine, stack, "<s>")
             }
         }
         writer.write(currentLine)
@@ -457,11 +408,26 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     writer.close()
 }
 
-fun createCloseTag(openTag: String) : String { // преобразование открытого тэга в закрытый
-    val tag = Regex("""([A-Za-z]+)""").find(openTag)
-    val answer = "<" + "/" + tag?.value + ">"
-    return answer
+private fun replaceTag(
+    element: String,
+    currentLine: String,
+    stack: MutableList<String>,
+    tag: String
+): String {
+    var currLine = currentLine
+    currLine = if (stack[stack.size - 1] != tag) {
+        stack.add(tag)
+        currLine.replaceFirst(element, tag)
+    } else {
+        stack.removeAt(stack.size - 1)
+        currLine.replaceFirst(element, createCloseTag(tag))
+    }
+    return currLine
 }
+
+fun createCloseTag(openTag: String): String = openTag.replace("<", "</")
+// преобразование открытого тэга в закрытый
+
 
 /**
  * Сложная
@@ -497,67 +463,67 @@ fun createCloseTag(openTag: String) : String { // преобразование �
  *
  * Пример входного файла:
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
-* Утка по-пекински
-    * Утка
-    * Соус
-* Салат Оливье
-    1. Мясо
-        * Или колбаса
-    2. Майонез
-    3. Картофель
-    4. Что-то там ещё
-* Помидоры
-* Фрукты
-    1. Бананы
-    23. Яблоки
-        1. Красные
-        2. Зелёные
+ * Утка по-пекински
+ * Утка
+ * Соус
+ * Салат Оливье
+1. Мясо
+ * Или колбаса
+2. Майонез
+3. Картофель
+4. Что-то там ещё
+ * Помидоры
+ * Фрукты
+1. Бананы
+23. Яблоки
+1. Красные
+2. Зелёные
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  *
  *
  * Соответствующий выходной файл:
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
 <html>
-  <body>
-    <ul>
-      <li>
-        Утка по-пекински
-        <ul>
-          <li>Утка</li>
-          <li>Соус</li>
-        </ul>
-      </li>
-      <li>
-        Салат Оливье
-        <ol>
-          <li>Мясо
-            <ul>
-              <li>
-                  Или колбаса
-              </li>
-            </ul>
-          </li>
-          <li>Майонез</li>
-          <li>Картофель</li>
-          <li>Что-то там ещё</li>
-        </ol>
-      </li>
-      <li>Помидоры</li>
-      <li>
-        Фрукты
-        <ol>
-          <li>Бананы</li>
-          <li>
-            Яблоки
-            <ol>
-              <li>Красные</li>
-              <li>Зелёные</li>
-            </ol>
-          </li>
-        </ol>
-      </li>
-    </ul>
-  </body>
+<body>
+<ul>
+<li>
+Утка по-пекински
+<ul>
+<li>Утка</li>
+<li>Соус</li>
+</ul>
+</li>
+<li>
+Салат Оливье
+<ol>
+<li>Мясо
+<ul>
+<li>
+Или колбаса
+</li>
+</ul>
+</li>
+<li>Майонез</li>
+<li>Картофель</li>
+<li>Что-то там ещё</li>
+</ol>
+</li>
+<li>Помидоры</li>
+<li>
+Фрукты
+<ol>
+<li>Бананы</li>
+<li>
+Яблоки
+<ol>
+<li>Красные</li>
+<li>Зелёные</li>
+</ol>
+</li>
+</ol>
+</li>
+</ul>
+</body>
 </html>
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
@@ -575,96 +541,55 @@ fun markdownToHtmlLists(inputName: String, outputName: String) {
     currentLine = ("<html><body>")
     for (line in lines) {
         currentLine += line
-        val findSymbols = Regex("""(\*|[\d]+\.)""").find(line)
-        val range = findSymbols?.range?.first
+        val findSymbols = Regex("""(\*|[\d]+\.)""").find(line) ?: continue
+        val range = findSymbols.range.first
         if (!firstIteration) { // отдельная обработка первой итерации
             firstIteration = true
-            if (findSymbols?.value == "*") {
-                stack.add(Pair("<ul>", level))
-                stack.add(Pair("<li>", level))
-                currentLine = currentLine.replaceFirst("*", "<ul><li>")
-                continue
-            } else {
-                stack.add(Pair("<ol>", level))
-                stack.add(Pair("<li>", level))
-                if (findSymbols != null) {
-                    currentLine = currentLine.replaceFirst(findSymbols.value, "<ol><li>")
-                }
-                continue
-            }
+            currentLine = addTag(findSymbols, stack, level, currentLine)
+            continue
         }
         if (range == 4 * level) {
-            if (findSymbols.value == "*") { //элемент ненумерованного списка
-                if (stack[stack.size - 1] != Pair("<li>", level)) {
-                    stack.add(Pair("<li>", level))
-                    currentLine = currentLine.replaceFirst("*", "<li>")
-                } else {
-                    stack.remove(Pair("<li>", level))
-                    currentLine = "</li>$currentLine"
-                    stack.add(Pair("<li>", level))
-                    currentLine = currentLine.replaceFirst("*", "<li>")
-                }
+            if (stack[stack.size - 1] != Pair("<li>", level)) {
+                stack.add(Pair("<li>", level))
+            } else {
+                currentLine = "</li>$currentLine"
             }
-            else { //элемент нумерованного списка
-                if (stack[stack.size - 1] != Pair("<li>", level)) {
-                    stack.add(Pair("<li>", level))
-                    currentLine = currentLine.replaceFirst(findSymbols.value, "<li>")
-                } else {
-                    stack.remove(Pair("<li>", level))
-                    currentLine = "</li>$currentLine"
-                    stack.add(Pair("<li>", level))
-                    currentLine = currentLine.replaceFirst(findSymbols.value, "<li>")
-                }
-            }
+            currentLine = currentLine.replaceFirst(findSymbols.value, "<li>")
         }
-        if (range != null) {
             if (range > 4 * level) { // список углубляется
                 level = range / 4
-                if (findSymbols.value == "*") {
-                    stack.add(Pair("<ul>", level))
-                    stack.add(Pair("<li>", level))
-                    currentLine = currentLine.replaceFirst("*", "<ul><li>")
-                } else {
-                    stack.add(Pair("<ol>", level))
-                    stack.add(Pair("<li>", level))
-                    currentLine = currentLine.replaceFirst(findSymbols.value, "<ol><li>")
-                }
-            }
-        }
-        if (range != null) {
-            if (range < 4 * level) {
+                currentLine = addTag(findSymbols, stack, level, currentLine)
+            } else if (range < 4 * level) {
                 level = range / 4
-                if (findSymbols.value == "*") {
-                    while (stack[stack.size - 1].second > level) {
-                        timeStr += createCloseTag(stack[stack.size - 1].first)
-                        stack.removeAt(stack.size - 1)
-                    }
-                    stack.remove(Pair("<li>", level))
-                    stack.add(Pair("<li>", level))
-                    currentLine = currentLine.replaceFirst("*", "<li>")
-                    currentLine = "$timeStr</li>$currentLine"
-                } else {
-                    while (stack[stack.size - 1].second > level) {
-                        timeStr += createCloseTag(stack[stack.size - 1].first)
-                        stack.removeAt(stack.size - 1)
-                    }
-                    stack.remove(Pair("<li>", level))
-                    stack.add(Pair("<li>", level))
-                    currentLine = currentLine.replaceFirst(findSymbols.value, "<li>")
-                    currentLine = "$timeStr</li>$currentLine"
+                while (stack[stack.size - 1].second > level) {
+                    timeStr += createCloseTag(stack[stack.size - 1].first)
+                    stack.removeAt(stack.size - 1)
                 }
-            }
+                currentLine = currentLine.replaceFirst(findSymbols.value, "<li>")
+                currentLine = "$timeStr</li>$currentLine"
         }
-            writer.write(currentLine)
-            writer.newLine()
-            currentLine = ""
-            timeStr = ""
-        }
-    for (element in stack.reversed()) {
-        currentLine += createCloseTag(element.first)
+        writer.write(currentLine)
+        writer.newLine()
+        currentLine = ""
+        timeStr = ""
+    }
+    for ((first) in stack.reversed()) {
+        currentLine += createCloseTag(first)
     }
     writer.write(currentLine)
     writer.close()
+}
+
+private fun addTag(
+    findSymbols: MatchResult,
+    stack: MutableList<Pair<String, Int>>,
+    level: Int,
+    currentLine: String
+): String {
+    val typeList = if (findSymbols.value == "*") "<ul>" else "<ol>"
+    stack.add(Pair(typeList, level))
+    stack.add(Pair("<li>", level))
+    return currentLine.replaceFirst(findSymbols.value, "$typeList<li>")
 }
 
 /**
@@ -685,23 +610,23 @@ fun markdownToHtml(inputName: String, outputName: String) {
  * Вывести в выходной файл процесс умножения столбиком числа lhv (> 0) на число rhv (> 0).
  *
  * Пример (для lhv == 19935, rhv == 111):
-   19935
-*    111
+19935
+ *    111
 --------
-   19935
+19935
 + 19935
 +19935
 --------
- 2212785
+2212785
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  * Нули в множителе обрабатывать так же, как и остальные цифры:
-  235
-*  10
+235
+ *  10
 -----
-    0
+0
 +235
 -----
- 2350
+2350
  *
  */
 fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
@@ -710,11 +635,11 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
     val len = (lhv * rhv).toString().length + 1
     //val len = lhv.toString().length + rhv.toString().length
     list.add(lhv.toString().padStart(len)) // первая строка
-    list.add("*"+ rhv.toString().padStart(len - 1)) //вторая строка
+    list.add("*" + rhv.toString().padStart(len - 1)) //вторая строка
     list.add("".padStart(len, '-')) // Третья строка
     var cnt = 0
     var sign = ""
-    for (digit in rhv.toString().reversed() ) {
+    for (digit in rhv.toString().reversed()) {
         sign = if (cnt > 0) "+" else ""
         val sm = lhv * digit.toString().toInt()
         list.add(sign + sm.toString().padStart(len - cnt - sign.length))
@@ -737,16 +662,16 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  * Вывести в выходной файл процесс деления столбиком числа lhv (> 0) на число rhv (> 0).
  *
  * Пример (для lhv == 19935, rhv == 22):
-  19935 | 22
- -198     906
- ----
-    13
-    -0
-    --
-    135
-   -132
-   ----
-      3
+19935 | 22
+-198     906
+----
+13
+-0
+--
+135
+-132
+----
+3
 
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  *

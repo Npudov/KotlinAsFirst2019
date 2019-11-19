@@ -204,16 +204,8 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    val result = expression.matches(Regex("""\d+[\d\s+\-]*""")) // проверка на соответсвие формату
+    val result = expression.matches(Regex("""(\d+\s[+|\-]\s)*\d+""")) // проверка на соответсвие формату
     if (!result) {
-        throw IllegalArgumentException()
-    }
-    val findDoubleOperators = Regex("""[+\-]+\s[+\-]+""").find(expression)
-    if (findDoubleOperators != null) {
-        throw IllegalArgumentException()
-    }
-    val findDoubleDigits = Regex("""\d+\s\d+""").find(expression)
-    if (findDoubleDigits != null) {
         throw IllegalArgumentException()
     }
     val list = Regex("""[\s]""").split(expression)
@@ -284,10 +276,8 @@ fun fromRoman(roman: String): Int {
     if (!Regex("""[IVXLCDM]+""").matches(roman)) {
         return -1
     }
-    val matches = Regex("""([IVXLCDM])""").findAll(roman)
-    val digits = matches.map { it.groupValues[1] }
-    for (digit in digits) {
-        when (digit[0]) {
+    for (digit in roman) {
+        when (digit) {
             'I' -> {
                 arabicList.add(1)
             }
@@ -384,63 +374,58 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     if (bracketCnt != 0) {
         throw IllegalArgumentException("Param commands has illegal brackets")
     }
-    var currcommandidx = 0
-    var currresultidx = cells / 2
-    while ((commandCnt <= limit) and (currcommandidx in 0 until commandsList.size)) {
-        when (commandsList[currcommandidx]) {
+    var currCommandIdx = 0
+    var currResultIdx = cells / 2
+    while ((commandCnt <= limit) and (currCommandIdx in 0 until commandsList.size)) {
+        when (commandsList[currCommandIdx]) {
             ' ' -> {
             }
             '>' -> {
-                currresultidx++
+                currResultIdx++
             }
             '<' -> {
-                currresultidx--
+                currResultIdx--
             }
             '+' -> {
-                result[currresultidx]++
+                result[currResultIdx]++
             }
             '-' -> {
-                result[currresultidx]--
+                result[currResultIdx]--
             }
-            '[' -> {
-                var bracketfnd = 0
-                var i = currcommandidx
-                if (result[currresultidx] == 0) {
-                    bracketfnd = 1
-                    while (bracketfnd != 0) {
-                        i++
-                        if (commandsList[i] == ']') {
-                            bracketfnd--
-                        } else if (commandsList[i] == '[') {
-                            bracketfnd++
-                        }
-                    }
-                    currcommandidx = i
-                }
-            }
-            ']' -> {
-                var bracketfnd = 0
-                var i = currcommandidx
-                if (result[currresultidx] != 0) {
-                    bracketfnd = 1
-                    while (bracketfnd != 0) {
-                        i--
-                        if (commandsList[i] == ']') {
-                            bracketfnd++
-                        } else if (commandsList[i] == '[') {
-                            bracketfnd--
-                        }
-                    }
-                    currcommandidx = i
-                }
+            '[', ']' -> {
+                currCommandIdx = bracket(currCommandIdx, result, currResultIdx, commandsList)
             }
             else -> throw IllegalArgumentException()
         }
-        currcommandidx++
+        currCommandIdx++
         commandCnt++
-        if ((currresultidx >= result.size) || (currresultidx < 0)) {
+        if ((currResultIdx >= result.size) || (currResultIdx < 0)) {
             throw IllegalStateException("Out of border")
         }
     }
     return result
+}
+
+private fun bracket(
+    currCommandIdx: Int,
+    result: MutableList<Int>,
+    currResultIdx: Int,
+    commandsList: List<Char>
+): Int {
+    var bracketFnd = 0
+    var i = currCommandIdx
+    if (((result[currResultIdx] == 0) && (commandsList[currCommandIdx] == '[')) ||
+        ((result[currResultIdx] != 0) && (commandsList[currCommandIdx] == ']'))) {
+        bracketFnd = 1
+        val sign = if (commandsList[currCommandIdx] == '[') 1 else -1
+        while (bracketFnd != 0) {
+            i += sign
+            if (commandsList[i] == ']') {
+                bracketFnd -= sign
+            } else if (commandsList[i] == '[') {
+                bracketFnd += sign
+            }
+        }
+    }
+    return i
 }

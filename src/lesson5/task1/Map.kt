@@ -329,38 +329,7 @@ fun hasAnagrams(words: List<String>): Boolean {
  *          "Mikhail" to setOf("Sveta", "Marat")
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
-    val result = mutableMapOf<String, MutableSet<String>>()
-    val listPeople = mutableListOf<String>() // fiil the list of people who has  friends
-    for ((key, _) in friends) {
-        listPeople.add(key)
-    }
-    for (people in listPeople ) {
-        result[people] = mutableSetOf<String>()
-        val findfriends = mutableMapOf<String, Boolean>()
-        for (element in listPeople) { // indicate, that we haven't found friends for this person yet
-            findfriends[element] = false
-        }
-        val querum = mutableListOf(people) // person for himself we find friends
-        while (querum.isNotEmpty()) {
-            val person = querum[0]
-            querum.remove(person)
-            findfriends[person] = true
-            for (friend in friends.getOrDefault(person, setOf())) {
-                if (friend != people) {
-                    result[people]?.add(friend)
-                }
-                if (friend !in listPeople) { // this person don't have friends
-                    result[friend] = mutableSetOf()
-                }
-                if (findfriends[friend] == false) { // if we haven't found friends for this person
-                    querum.add(friend)
-                }
-            }
-        }
-    }
-    return result
-}
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
 
 /**
  * Сложная
