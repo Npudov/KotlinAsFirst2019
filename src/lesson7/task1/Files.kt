@@ -633,7 +633,6 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
     val writer = File(outputName).bufferedWriter()
     val list = mutableListOf<String>()
     val len = (lhv * rhv).toString().length + 1
-    //val len = lhv.toString().length + rhv.toString().length
     list.add(lhv.toString().padStart(len)) // первая строка
     list.add("*" + rhv.toString().padStart(len - 1)) //вторая строка
     list.add("".padStart(len, '-')) // Третья строка
