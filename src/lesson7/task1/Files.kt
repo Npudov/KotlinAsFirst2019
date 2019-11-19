@@ -381,6 +381,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 currentLine = createCloseTag("<p>") + "<p>" + currentLine
             }
             else {
+                stack.add("<p>")
                 currentLine = "<p>$currentLine"
             }
         }
