@@ -369,11 +369,15 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     stack.add("<body>")
     stack.add("<p>")
     var currentLine = "<html><body><p>"
+    var isTextPresent = false
     for ((index, line)  in lines.withIndex()) { // бежим по строке
+        if ((line != "") && (!isTextPresent)) {
+            isTextPresent = true
+        }
         currentLine += line
         val str = line
         if (((str == "") && !strIsEmpty) && (index > 0)) {
-            strIsEmpty = true
+            if (isTextPresent) strIsEmpty = true
             continue
         } else if ((str != "") && strIsEmpty) {
             strIsEmpty = false
