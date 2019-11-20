@@ -377,13 +377,13 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             continue
         } else if ((str != "") && strIsEmpty) {
             strIsEmpty = false
-            if (stack[stack.size - 1] == "<p>") {
+            //if (stack[stack.size - 1] == "<p>") {
                 currentLine = createCloseTag("<p>") + "<p>" + currentLine
-            }
+            /*}
             else {
                 stack.add("<p>")
                 currentLine = "<p>$currentLine"
-            }
+            }*/
         }
         val findSymbols = Regex("""(\*\*|\*|~~)""").findAll(currentLine)
         val list = findSymbols.map { it.groupValues[1] }
