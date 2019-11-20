@@ -370,24 +370,17 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
     stack.add("<p>")
     var currentLine = "<html><body><p>"
     var isTextPresent = false
-    for ((index, line)  in lines.withIndex()) { // бежим по строке
+    for ((index, line) in lines.withIndex()) { // бежим по строке
         if ((line != "") && (!isTextPresent)) {
             isTextPresent = true
         }
         currentLine += line
-        val str = line
-        if (((str == "") && !strIsEmpty) && (index > 0)) {
+        if (((line == "") && !strIsEmpty) && (index > 0)) {
             if (isTextPresent) strIsEmpty = true
             continue
-        } else if ((str != "") && strIsEmpty) {
+        } else if ((line != "") && strIsEmpty) {
             strIsEmpty = false
-            //if (stack[stack.size - 1] == "<p>") {
-                currentLine = createCloseTag("<p>") + "<p>" + currentLine
-            /*}
-            else {
-                stack.add("<p>")
-                currentLine = "<p>$currentLine"
-            }*/
+            currentLine = createCloseTag("<p>") + "<p>" + currentLine
         }
         val findSymbols = Regex("""(\*\*|\*|~~)""").findAll(currentLine)
         val list = findSymbols.map { it.groupValues[1] }
