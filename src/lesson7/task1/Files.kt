@@ -55,14 +55,14 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val map = mutableMapOf<String, Int>()
-    val lines = File(inputName).readLines()
+    val lines = File(inputName).readLines().toString().toLowerCase()
     for (element in substrings) {
         val symbols = "-().^+[]" // символы , которые нуждаются в экранировании, экранирую
         var pattern = element.toLowerCase()
         for (symbol in symbols) {
             pattern = pattern.replace(symbol.toString(), """\""" + symbol)
         }
-        val matchResult = Regex(pattern = "(?=$pattern)").findAll(lines.toString().toLowerCase())
+        val matchResult = Regex(pattern = "(?=$pattern)").findAll(lines)
         val cnt = matchResult.map { it.value }.count()
         map[element] = cnt
     }
@@ -554,17 +554,18 @@ fun markdownToHtmlLists(inputName: String, outputName: String) {
             }
             currentLine = currentLine.replaceFirst(findSymbols.value, "<li>")
         }
-            if (range > 4 * level) { // список углубляется
-                level = range / 4
-                currentLine = addTag(findSymbols, stack, level, currentLine)
-            } else if (range < 4 * level) {
-                level = range / 4
-                while (stack[stack.size - 1].second > level) {
-                    timeStr += createCloseTag(stack[stack.size - 1].first)
-                    stack.removeAt(stack.size - 1)
-                }
-                currentLine = currentLine.replaceFirst(findSymbols.value, "<li>")
-                currentLine = "$timeStr</li>$currentLine"
+
+        if (range > 4 * level) { // список углубляется
+            level = range / 4
+            currentLine = addTag(findSymbols, stack, level, currentLine)
+        } else if (range < 4 * level) {
+            level = range / 4
+            while (stack[stack.size - 1].second > level) {
+                timeStr += createCloseTag(stack[stack.size - 1].first)
+                stack.removeAt(stack.size - 1)
+            }
+            currentLine = currentLine.replaceFirst(findSymbols.value, "<li>")
+            currentLine = "$timeStr</li>$currentLine"
         }
         writer.write(currentLine)
         writer.newLine()
