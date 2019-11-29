@@ -277,6 +277,7 @@ fun minContainingCircle(vararg points: Point): Circle {
     for (i in 0 until points.size - 2) {
         for (j in i+1 until points.size - 1) {
             for (k in j+1 until points.size) {
+                if ((points[i] == points[j]) || (points[j] == points[k]) || (points[i] == points[k])) continue
                 val circle = circleByThreePoints(points[i] , points[j], points[k])
                 val trueCircle = Circle(circle.center , circle.radius + 10000 * Math.ulp(circle.radius))
                 var contain = true
