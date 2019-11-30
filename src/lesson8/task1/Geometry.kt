@@ -80,6 +80,7 @@ data class Circle(val center: Point, val radius: Double) {
         val dst = center.distance(other.center)
         return if (dst <= radius + other.radius) 0.0 else (dst - (radius + other.radius))
     }
+
     /**
      * Тривиальная
      *

@@ -55,7 +55,7 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val map = mutableMapOf<String, Int>()
-    val lines = File(inputName).readLines().toString().toLowerCase()
+    val lines = File(inputName).readText().toLowerCase()
     for (element in substrings) {
         val symbols = "-().^+[]" // символы , которые нуждаются в экранировании, экранирую
         var pattern = element.toLowerCase()
