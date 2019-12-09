@@ -60,7 +60,37 @@ operator fun Matrix<Int>.plus(other: Matrix<Int>): Matrix<Int> {
  * 10 11 12  5
  *  9  8  7  6
  */
-fun generateSpiral(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateSpiral(height: Int, width: Int): Matrix<Int> {
+    val matrix = createMatrix(height, width, 0)
+    var i = 0
+    var k = 0
+    var step = 1
+    while (i < height * width) {
+        k++
+        //слева направо
+        for (j in k - 1 until width - k + 1) {
+            matrix[k - 1, j] = step++
+            i++
+        }
+        if (i >= height * width) continue
+        //сверху вниз
+        for (j in k until height - k) {
+            matrix[j, width - k] = step++
+            i++
+        }
+        //справа налево
+        for (j in width - k downTo k - 1) {
+            matrix[height - k, j] = step++
+            i++
+        }
+        //снизу вверх
+        for (j in height - k - 1 downTo k) {
+            matrix[j, k - 1] = step++
+            i++
+        }
+    }
+    return matrix
+}
 
 /**
  * Сложная
@@ -76,7 +106,38 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> = TODO()
  *  1  2  2  2  2  1
  *  1  1  1  1  1  1
  */
-fun generateRectangles(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateRectangles(height: Int, width: Int): Matrix<Int> {
+    val matrix = createMatrix(height, width, 0)
+    var i = 0
+    var k = 0
+    var step = 1
+    while (i < height * width) {
+        k++
+        //слева направо
+        for (j in k - 1 until width - k + 1) {
+            matrix[k - 1, j] = step
+            i++
+        }
+        if (i >= height * width) continue
+        //сверху вниз
+        for (j in k until height - k) {
+            matrix[j, width - k] = step
+            i++
+        }
+        //справа налево
+        for (j in width - k downTo k - 1) {
+            matrix[height - k, j] = step
+            i++
+        }
+        //снизу вверх
+        for (j in height - k - 1 downTo k) {
+            matrix[j, k - 1] = step
+            i++
+        }
+        step++
+    }
+    return matrix
+}
 
 /**
  * Сложная
