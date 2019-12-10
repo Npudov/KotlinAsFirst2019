@@ -78,11 +78,13 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> {
             matrix[j, width - k] = step++
             i++
         }
+        if (i >= height * width) continue
         //справа налево
         for (j in width - k downTo k - 1) {
             matrix[height - k, j] = step++
             i++
         }
+        if (i >= height * width) continue
         //снизу вверх
         for (j in height - k - 1 downTo k) {
             matrix[j, k - 1] = step++
